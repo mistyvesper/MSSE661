@@ -99,13 +99,24 @@ class Collection
         // open database connection
         
         $this->db->openDBConnection();
+        
+        // get document title
 
         $title = $document->getDocument()['title'];
+        $type = $document->getDocument()['type'];
+        $extension = $document->getDocument()['extension'];
         
-        mysqli_query($this->db->getDBConnection(), "CALL usp_deleteDocument('$title', 'Regis');");
+        // delete document and reseed document table
+        
+        mysqli_query($this->db->getDBConnection(), "CALL usp_deleteDocument('$title', '$type', '$extension', 'Regis');");
         $this->seed = mysqli_fetch_array(mysqli_query($this->db->getDBConnection(), "SELECT MAX(documentID) FROM document;"), MYSQLI_NUM)[0];
         mysqli_query($this->db->getDBConnection(), "ALTER TABLE document AUTO_INCREMENT = '$this->seed';");
+        
+        // get documents
+        
         $this->getDocuments();
+        
+        // close database connection
         
         $this->db->closeDBConnection();
     }

@@ -19,7 +19,9 @@
 
 /**
  * Description of DBConnection
- *
+ * 
+ * Provides methods for opening, closing, and retrieving MySQL database connections.
+ * 
  * @author misty
  */
 class DBConnection {

@@ -20,24 +20,18 @@
 /**
  * Description of Document
  *
+ * Provides methods for creating, getting, and updating documents.
+ * 
  * @author misty
  */
 class Document
 {
     // encapsulate Document properties by declaring private
 
-    /**
-    * @var array
-    */
     private $document;
 
     // constructor to initialize Document properties
-
-    /**
-    * Class constructor
-    *
-    * @return void
-    */
+    
     public function __construct($docType, $docTitle, $docExtension, $docSize, $docUploadDate) {
 
         $this->document['type'] = $docType;
@@ -47,12 +41,8 @@ class Document
         $this->document['uploadDate'] = $docUploadDate;
     }
 
-    // function to return document array
+    // function to return document array (properties)
 
-    /**
-    *
-    * @return var
-    */
     public function getDocument() 
     {
         return $this->document;
