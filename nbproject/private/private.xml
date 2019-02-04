@@ -5,10 +5,13 @@
         <group>
             <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/index.php</file>
             <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/DBConnection.php</file>
+            <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/sanitize.php</file>
+            <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/uploadDocument.php</file>
             <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/Tests/CollectionTest.php</file>
-            <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/UploadDocument.php</file>
+            <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/Message.php</file>
             <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/Collection.php</file>
             <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/Document.php</file>
+            <file>file:/C:/Users/misty/Documents/NetBeansProjects/NanoSite/uploadFile.php</file>
         </group>
     </open-files>
 </project-private>

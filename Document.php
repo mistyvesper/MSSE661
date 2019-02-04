@@ -43,9 +43,50 @@ class Document
 
     // function to return document array (properties)
 
-    public function getDocument() 
-    {
+    public function getDocument() {
         return $this->document;
+    }
+    
+    // function to get document type
+    
+    public function getDocumentType() {
+        return $this->document['type'];
+    }
+    
+    // function to set document type
+    
+    public function setDocumentType($newType) {
+        $this->document['type'] = $newType;
+    }
+    
+    // function to get document title
+    
+    public function getDocumentTitle() {
+        return $this->document['title'];
+    }
+    
+    // function to set document title
+    
+    public function setDocumentTitle($newTitle) {
+        $this->document['title'] = $newTitle;
+    }
+    
+    // function to get document extension
+    
+    public function getDocumentExtension() {
+        return $this->document['extension'];
+    }
+    
+    // function to get document size
+    
+    public function getDocumentSize() {
+        return $this->document['size'];
+    }
+    
+    // function to get document upload date
+    
+    public function getDocumentUploadDate() {
+        return $this->document['uploadDate'];
     }
 
     // function to update document properties (using optional parameters)
@@ -55,13 +96,13 @@ class Document
         // check if document type is empty string or changed and update
 
         if ($docType != '' && $docType != $this->document['type']) {
-            $this->document['type'] = $docType;
+            $this->setDocumentType($docType);
         } 
 
         // check if document title is empty string or changed and update
 
         if ($docTitle != '' && $docTitle != $this->document['title']) {
-            $this->document['title'] = $docTitle;
+            $this->setDocumentTitle($docTitle);
         }
     }
 }

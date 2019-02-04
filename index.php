@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         <div>
             <table>
                 <td style="align:left"><input type="text"><button>Search</button></td>
-                <td style="align:right"><button>Upload Document</button></td>
+                <td style="align:right"><a href="uploadDocument.php">Upload Document</a></td>
             </table>
         </div>
         <br>
@@ -33,32 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         
         require_once 'Document.php';
         require_once 'Collection.php';
-        
-        // create sample documents
-        
-        $document1 = new Document('Presentation',
-                                  'Nano-site Presentation',
-                                  'PPTX',
-                                  '4 MB',
-                                  '2019-01-18');
-        
-        $document2 = new Document('CV',
-                                  'Software Engineer CV', 
-                                  'PDF',
-                                  '120 KB',
-                                  '2019-01-05');
-        
-        $document3 = new Document('Thesis',
-                                  'Experimental Web Development Framework',
-                                  'DOCX',
-                                  '200 KB',
-                                  '2018-12-23');
-        
-        $document4 = new Document('Research Paper',
-                                  'Effects of Cubicles on Employee Morale',
-                                  'PDF',
-                                  '1 MB',
-                                  '2018-12-10');
+        require_once 'DBConnection.php';
         
         // create database connection
         
@@ -67,13 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
         // create Collection
         
         $collection = new Collection($dbConnection);
-        
-        // add Documents to Collection
-        
-        $collection->addDocument($document1);
-        $collection->addDocument($document2);
-        $collection->addDocument($document3);
-        $collection->addDocument($document4);
         
         // show Collection
         

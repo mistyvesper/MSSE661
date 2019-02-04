@@ -18,6 +18,7 @@
  */
 
 require_once 'DBConnection.php';
+require_once 'Message.php';
 
 /**
  * Description of Collection
@@ -31,9 +32,11 @@ class Collection
 {
     // encapsulate Collection properties by declaring private
 
-    private $collection = [];
-    private $db;
-    private $seed;
+    private $collection = []; // array of documents
+    private $docTypes = []; // array of document types
+    private $db; // DBConnection instance
+    private $con; // DBConnection connection
+    private $seed; // for reseeding AUTO_INCREMENT
     
     // constructor requires database connection to instantiate
     
@@ -52,15 +55,106 @@ class Collection
         // open database connection
         
         $this->db->openDBConnection();
+        $this->con = $this->db->getDBConnection();
         
-        // get documents
+        // check for errors
         
-        $query = "CALL usp_getDocumentsByUser('Regis');";
-        $result=mysqli_query($this->db->getDBConnection(),$query);
-        while ($row = mysqli_fetch_assoc($result)) {
-            $this->collection[] = $row;
+        if ($this->con->connect_error ) {
+            
+            // create new error message
+            
+            $error = new Message();
+            $error->dbConnectError();
+            unset($error);
+        } else {
+            
+            // get documents
+        
+            $query = "CALL usp_getDocumentsByUser('Regis');";
+            $result = mysqli_query($this->con,$query);
+            while ($row = mysqli_fetch_assoc($result)) {
+                $this->collection[] = $row;
+            }
+            return $this->collection;
         }
-        return $this->collection;
+        
+        // close result and database connection 
+        
+        $result->close();
+        $this->db->closeDBConnection();
+    }
+    
+    // function to get document types
+    
+    public function getDocumentTypes() {
+        
+        // open database connection
+        
+        $this->db->openDBConnection();
+        $this->con = $this->db->getDBConnection();
+        
+        // check for errors
+        
+        if ($this->con->connect_error ) {
+            
+            // create new error message
+            
+            $error = new Message();
+            $error->dbConnectError();
+            unset($error);
+        } else {
+            
+            // get document types
+        
+            $query = "CALL usp_getDocumentTypes;";
+            $result = mysqli_query($this->con,$query);
+            while ($row = mysqli_fetch_assoc($result)) {
+                $this->docTypes[] = $row['typeDescription'];
+            }
+            return $this->docTypes;
+        }
+        
+        // close result and database connection 
+        
+        $result->close();
+        $this->db->closeDBConnection();
+    }
+    
+    // function to get document ID
+    
+    public function getDocumentID($document) {
+        
+        $title = $document->getDocumentTitle();
+        $type = $document->getDocumentType();
+        $extension = $document->getDocumentExtension();
+        $user = 'Regis';
+        
+        // open database connection
+        
+        $this->db->openDBConnection();
+        $this->con = $this->db->getDBConnection();
+        
+        // check for errors
+        
+        if ($this->con->connect_error ) {
+            
+            // create new error message
+            
+            $error = new Message();
+            $error->dbConnectError();
+            unset($error);
+        } else {
+            
+            // get document ID
+        
+            $query = "CALL usp_getDocumentID('$title', '$type', '$extension', '$user');";
+            $documentID = mysqli_fetch_array(mysqli_query($this->con, $query), MYSQLI_NUM)[0];
+            if ($documentID) {
+                return $documentID;
+            } else {
+                return 0;
+            }
+        }
         
         // close database connection 
         
@@ -74,22 +168,46 @@ class Collection
         // open database connection
         
         $this->db->openDBConnection();
-
-        // add document
+        $this->con = $this->db->getDBConnection();
+        
+        // check for errors
+        
+        if ($this->con->connect_error ) {
             
-        $title = $document->getDocument()['title'];
-        $type = $document->getDocument()['type'];
-        $extension = $document->getDocument()['extension'];
-        $size = $document->getDocument()['size'];
-        mysqli_query($this->db->getDBConnection(), "CALL usp_insertDocument('$title', '$type', '$extension', '$size', 'Regis');");
+            // create new error message 
+            
+            $error = new Message();
+            $error->dbConnectError();
+            unset($error);
+        } else {
+            
+            // prepare insert statement
+            
+            $statement = $this->con->prepare("CALL usp_insertDocument(?, ?, ?, ?, ?);");
+            $statement->bind_param('sssss', $title, $type, $extension, $size, $user);
+            
+            // get document properties
         
-        // update collection array
+            $title = $document->getDocument()['title'];
+            $type = $document->getDocument()['type'];
+            $extension = $document->getDocument()['extension'];
+            $size = $document->getDocument()['size'];
+            $user = 'Regis';
         
-        $this->getDocuments();
+            // add document
         
-        // close database connection
-        
-        $this->db->closeDBConnection();
+            $statement->execute();
+            
+            // check for errors
+            
+            if (!$statement->affected_rows <= 0) {
+                $this->getDocuments(); // update collection array
+            }
+          
+            // close database connection
+
+            $this->db->closeDBConnection();
+        } 
     }
 
     // function to delete document from collection
@@ -99,22 +217,56 @@ class Collection
         // open database connection
         
         $this->db->openDBConnection();
+        $this->con = $this->db->getDBConnection();
         
-        // get document title
+        // check for errors
+        
+        if ($this->con->connect_error ) {
+            
+            // create new error message
+            
+            $error = new Message();
+            $error->dbConnectError();
+            unset($error);
+        } else {
+            
+            // prepare insert statement
+            
+            $statement = $this->con->prepare("CALL usp_deleteDocument(?, ?, ?, ?);");
+            $statement->bind_param('ssss', $title, $type, $extension, $user);
+            
+            // get document properties
 
-        $title = $document->getDocument()['title'];
-        $type = $document->getDocument()['type'];
-        $extension = $document->getDocument()['extension'];
-        
-        // delete document and reseed document table
-        
-        mysqli_query($this->db->getDBConnection(), "CALL usp_deleteDocument('$title', '$type', '$extension', 'Regis');");
-        $this->seed = mysqli_fetch_array(mysqli_query($this->db->getDBConnection(), "SELECT MAX(documentID) FROM document;"), MYSQLI_NUM)[0];
-        mysqli_query($this->db->getDBConnection(), "ALTER TABLE document AUTO_INCREMENT = '$this->seed';");
-        
-        // get documents
-        
-        $this->getDocuments();
+            $title = $document->getDocument()['title'];
+            $type = $document->getDocument()['type'];
+            $extension = $document->getDocument()['extension'];
+            $user = 'Regis';
+
+            // delete document
+            
+            $statement->execute();
+            
+            // check for errors
+            
+            if ($statement->affected_rows <= 0) {
+                
+                // create new error message
+                
+                $error = new Message();
+                $error->dbDeleteError();
+                unset($error);
+            } else {
+                
+                // reseed documentID
+                
+                $this->seed = mysqli_fetch_array(mysqli_query($this->con, "SELECT MAX(documentID) FROM document;"), MYSQLI_NUM)[0];
+                mysqli_query($this->con, "ALTER TABLE document AUTO_INCREMENT = '$this->seed';");
+                
+                // get documents
+
+                $this->getDocuments();
+            }
+        }
         
         // close database connection
         
@@ -124,29 +276,52 @@ class Collection
     // function to display collection in table
             
     public function showCollection() {
+        
+        // get documents
+        
+        $this->getDocuments();
+        
+        // check for existing documents
 
-        // iterate through Collection array to display Documents
+        if (count($this->collection) == 0) {
+            
+            // create new error message
+            
+            $error = new Message();
+            $error->dbNoRecords();
+            unset($error);
+        } else {
+            
+            // iterate through Collection array to display Documents
 
-        echo "<div><table><tr>"
-                . "<th align=\"left\" style=\"width:50px\">Select</th>"
-                . "<th align=\"left\" style=\"width:150px\">Type</th>"
-                . "<th align=\"left\" style=\"width:350px\">Title</th>"
-                . "<th align=\"left\" style=\"width:75px\">Extension</th>"
-                . "<th align=\"left\" style=\"width:75px\">File Size</th>"
-                . "<th align=\"left\" style=\"width:100px\">Upload Date</th>"
-                . "<th align=\"left\" style=\"width:75px\">Update</th></tr>";
+            echo "<div><table><tr>"
+                    . "<th align=\"left\" style=\"width:50px\">Select</th>"
+                    . "<th align=\"left\" style=\"width:150px\">Type</th>"
+                    . "<th align=\"left\" style=\"width:350px\">Title</th>"
+                    . "<th align=\"left\" style=\"width:75px\">Extension</th>"
+                    . "<th align=\"left\" style=\"width:75px\">File Size</th>"
+                    . "<th align=\"left\" style=\"width:100px\">Upload Date</th>"
+                    . "<th align=\"left\" style=\"width:75px\">Update</th></tr>";
 
-        foreach ($this->collection as $document) {
+            foreach ($this->collection as $document) {
 
-            echo '<tr><td><input type="checkbox"></td><td><input type="text" value="' 
-                    . $document['type'] . '"></td><td><input type="text" style="width:350px" value="'
-                    . $document['title'] . '"></td><td>'
-                    . $document['extension'] . '</td><td>'
-                    . $document['size'] . '</td><td>'
-                    . $document['uploadDate'] . '</td><td>'
-                    . '<button>Update</button></td><td></tr>';
+                echo '<tr><td><input type="checkbox"></td><td><input type="text" value="' 
+                        . $document['type'] . '"></td><td><input type="text" style="width:350px" value="'
+                        . $document['title'] . '"></td><td>'
+                        . $document['extension'] . '</td><td>'
+                        . $document['size'] . '</td><td>'
+                        . $document['uploadDate'] . '</td><td>'
+                        . '<button>Update</button></td><td></tr>';
+            }
+
+            echo "</table></div>";
         }
-
-        echo "</table></div>";
+    }
+    
+    // function to get document count
+    
+    public function getDocumentCount() {
+        $this->getDocuments();
+        return count($this->collection);
     }
 }
