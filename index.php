@@ -1,52 +1,64 @@
-<!DOCTYPE html>
-<!--
-Copyright (C) 2019 misty
+<?php
 
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
+/**
+ * Description
+ * 
+ * Displays main collection page.  
+ * 
+ * @author misty
+ */
+    
+    require_once 'header.php';
+    
+    // check if user logged in
+    
+    if (!$loggedIn) {
+        header('Location: loginPage.php');
+    }
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
+    // create database connection
 
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
--->
-<html>
-    <head>
-        <meta charset="UTF-8">
-        <title>Nano-site</title>
-    </head>
-    <body>
-        <h1>Documents</h1>
-        <div>
-            <table>
-                <td style="align:left"><input type="text"><button>Search</button></td>
-                <td style="align:right"><a href="uploadDocument.php">Upload Document</a></td>
-            </table>
-        </div>
-        <br>
-        <?php
-        
-        require_once 'Document.php';
-        require_once 'Collection.php';
-        require_once 'DBConnection.php';
-        
-        // create database connection
-        
-        $dbConnection = new DBConnection('localhost', 'Regis', 'regis', 'collection');
+    $database = new Database($dbHost, $dbUser, $dbPassword, $dbDBName);
 
-        // create Collection
-        
-        $collection = new Collection($dbConnection);
-        
-        // show Collection
-        
-        $collection->showCollection();
+    // create Collection
 
-        ?>
-    </body>
-</html>
+    $collection = new Collection($appUser, $database);
+    
+    // capitalize appUser
+    
+    $upperAppUser = strtoupper($appUser);
+    
+    // display web page
+
+    echo "<html>
+            <head>
+                <meta charset='UTF-8'>
+                <title>Nano-site</title>
+            </head>
+            <body>
+                <div>
+                    <table style='width:100%'>
+                        <tr>
+                            <td style='width:3%'><img src='Media/person_icon.png' style='width:35px;height:35px;'></td>
+                            <td style='width:18%'>Signed in as: $upperAppUser</td>
+                            <td style='width:80%' align='right'><a href='logoutPage.php'>Logout</a></td>
+                        </tr>
+                    </table>
+                </div>
+                <h1>Documents</h1>
+                <div>
+                    <table>
+                        <td style='align:left'><input type='text'><button>Search</button></td>
+                        <td style='align:right'><a href='uploadDocument.php'>Upload Document</a></td>
+                    </table>
+                </div>
+                <br>";
+    
+    // show Collection
+
+    $collection->showCollection();
+    
+    // end of web page
+    
+    echo "</body>
+        </html>";

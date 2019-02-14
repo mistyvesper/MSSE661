@@ -1,30 +1,14 @@
 <?php
 
-/*
- * Copyright (C) 2019 misty
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 /**
- * Description of DBConnection
+ * Description of Database
  * 
  * Provides methods for opening, closing, and retrieving MySQL database connections.
  * 
  * @author misty
  */
-class DBConnection {
+
+class Database {
     
     // encapsulate Document properties by declaring private
     
@@ -43,16 +27,11 @@ class DBConnection {
         $this->database = $dbDatabase;
     }
     
-    // function to connect to MySQL database
-    
-    public function openDBConnection() {
-        $this->con = new mysqli($this->host, $this->user, $this->password, $this->database)
-                or die ('Could not connect to the database server' . mysqli_connect_error());
-    }
-    
-    // function to return connection
+    // function to connect to database
     
     public function getDBConnection() {
+        $this->con = new mysqli($this->host, $this->user, $this->password, $this->database)
+                or die ('Could not connect to the database server' . mysqli_connect_error());
         return $this->con;
     }
     

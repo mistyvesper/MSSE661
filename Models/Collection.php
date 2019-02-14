@@ -1,25 +1,5 @@
 <?php
 
-/*
- * Copyright (C) 2019 misty
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-require_once 'DBConnection.php';
-require_once 'Message.php';
-
 /**
  * Description of Collection
  * 
@@ -28,20 +8,25 @@ require_once 'Message.php';
  * 
  * @author misty
  */
+
+require_once 'Message.php';
+
 class Collection
 {
     // encapsulate Collection properties by declaring private
 
     private $collection = []; // array of documents
     private $docTypes = []; // array of document types
-    private $db; // DBConnection instance
-    private $con; // DBConnection connection
+    private $db; // database
+    private $con; // Database connection
     private $seed; // for reseeding AUTO_INCREMENT
+    private $collectionUser; // for displaying user-specific documents
     
-    // constructor requires database connection to instantiate
+    // constructor requires user and database connection to instantiate
     
-    public function __construct($dbConnection) {
-        $this->db = $dbConnection;    
+    public function __construct($user, $database) {
+        $this->collectionUser = $user;
+        $this->db = $database;
     }
 
     // function to get collection array
@@ -54,31 +39,23 @@ class Collection
         
         // open database connection
         
-        $this->db->openDBConnection();
         $this->con = $this->db->getDBConnection();
         
         // check for errors
         
-        if ($this->con->connect_error ) {
-            
-            // create new error message
-            
-            $error = new Message();
-            $error->dbConnectError();
-            unset($error);
-        } else {
+        if (!$this->con->connect_error ) {
             
             // get documents
         
-            $query = "CALL usp_getDocumentsByUser('Regis');";
-            $result = mysqli_query($this->con,$query);
+            $query = "CALL usp_getDocumentsByUser('$this->collectionUser');";
+            $result = mysqli_query($this->con, $query);
             while ($row = mysqli_fetch_assoc($result)) {
                 $this->collection[] = $row;
             }
             return $this->collection;
         }
         
-        // close result and database connection 
+        // close result and database connection
         
         $result->close();
         $this->db->closeDBConnection();
@@ -90,31 +67,23 @@ class Collection
         
         // open database connection
         
-        $this->db->openDBConnection();
         $this->con = $this->db->getDBConnection();
         
         // check for errors
         
-        if ($this->con->connect_error ) {
-            
-            // create new error message
-            
-            $error = new Message();
-            $error->dbConnectError();
-            unset($error);
-        } else {
+        if (!$this->con->connect_error ) {
             
             // get document types
         
             $query = "CALL usp_getDocumentTypes;";
-            $result = mysqli_query($this->con,$query);
+            $result = mysqli_query($this->con, $query);
             while ($row = mysqli_fetch_assoc($result)) {
                 $this->docTypes[] = $row['typeDescription'];
             }
             return $this->docTypes;
         }
         
-        // close result and database connection 
+        // close result and database connection
         
         $result->close();
         $this->db->closeDBConnection();
@@ -124,31 +93,25 @@ class Collection
     
     public function getDocumentID($document) {
         
+        // open database connection
+        
+        $this->con = $this->db->getDBConnection();
+        
+        // get document details
+        
         $title = $document->getDocumentTitle();
         $type = $document->getDocumentType();
         $extension = $document->getDocumentExtension();
-        $user = 'Regis';
-        
-        // open database connection
-        
-        $this->db->openDBConnection();
-        $this->con = $this->db->getDBConnection();
         
         // check for errors
         
-        if ($this->con->connect_error ) {
-            
-            // create new error message
-            
-            $error = new Message();
-            $error->dbConnectError();
-            unset($error);
-        } else {
+        if (!$this->con->connect_error ) {
             
             // get document ID
         
-            $query = "CALL usp_getDocumentID('$title', '$type', '$extension', '$user');";
-            $documentID = mysqli_fetch_array(mysqli_query($this->con, $query), MYSQLI_NUM)[0];
+            $query = "CALL usp_getDocumentID('$title', '$type', '$extension', '$this->collectionUser');";
+            $result = mysqli_query($this->con, $query);
+            $documentID = mysqli_fetch_array($result, MYSQLI_NUM)[0];
             if ($documentID) {
                 return $documentID;
             } else {
@@ -156,9 +119,10 @@ class Collection
             }
         }
         
-        // close database connection 
+        // close result and close database connection
         
-        $this->db->closeDBConnection();
+        $result->close();
+        $db->closeDBConnection();
     }
 
     // function to add document to collection
@@ -167,19 +131,11 @@ class Collection
         
         // open database connection
         
-        $this->db->openDBConnection();
         $this->con = $this->db->getDBConnection();
         
         // check for errors
         
-        if ($this->con->connect_error ) {
-            
-            // create new error message 
-            
-            $error = new Message();
-            $error->dbConnectError();
-            unset($error);
-        } else {
+        if (!$this->con->connect_error ) {
             
             // prepare insert statement
             
@@ -192,7 +148,7 @@ class Collection
             $type = $document->getDocument()['type'];
             $extension = $document->getDocument()['extension'];
             $size = $document->getDocument()['size'];
-            $user = 'Regis';
+            $user = $this->collectionUser;
         
             // add document
         
@@ -200,14 +156,31 @@ class Collection
             
             // check for errors
             
-            if (!$statement->affected_rows <= 0) {
+            if ($statement->affected_rows > 0) {
                 $this->getDocuments(); // update collection array
             }
-          
-            // close database connection
-
-            $this->db->closeDBConnection();
         } 
+        
+        // close database connection
+        
+        $this->db->closeDBConnection();
+    }
+    
+    // function to update document properties (using optional parameters)
+
+    public function updateDocument($docType = '', $docTitle = '') {
+
+        // check if document type is empty string or changed and update
+
+        if ($docType != '' && $docType != $this->document['type']) {
+            $this->setDocumentType($docType);
+        } 
+
+        // check if document title is empty string or changed and update
+
+        if ($docTitle != '' && $docTitle != $this->document['title']) {
+            $this->setDocumentTitle($docTitle);
+        }
     }
 
     // function to delete document from collection
@@ -216,19 +189,11 @@ class Collection
         
         // open database connection
         
-        $this->db->openDBConnection();
         $this->con = $this->db->getDBConnection();
         
         // check for errors
         
-        if ($this->con->connect_error ) {
-            
-            // create new error message
-            
-            $error = new Message();
-            $error->dbConnectError();
-            unset($error);
-        } else {
+        if (!$this->con->connect_error ) {
             
             // prepare insert statement
             
@@ -240,7 +205,7 @@ class Collection
             $title = $document->getDocument()['title'];
             $type = $document->getDocument()['type'];
             $extension = $document->getDocument()['extension'];
-            $user = 'Regis';
+            $user = $this->collectionUser;
 
             // delete document
             
