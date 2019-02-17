@@ -1,88 +1,193 @@
 <?php
 
 /**
- * Description
- * 
- * Provides different error messages to be displayed by web app.
+ * Description of Message
  *
+ * Provides CRUD methods for messages shared between users.
+ * 
  * @author misty
  */
 
 class Message {
     
-    public function dbConnectError() {
-        echo "<div>Error connecting to database. Please contact the system administrator.<br></div>";
+    // encapsulate Message properties by declaring private
+
+    private $message = [];
+    private $db; // database
+    private $con; // Database connection
+    
+    // constructor to initialize Message properties
+    
+    public function __construct($msgSubject, $msgBody, $msgTo, $msgFrom, $msgSharedDate, $database) {
+
+        $this->message['subject'] = $msgSubject;
+        $this->message['body'] = $msgBody;
+        $this->message['to'] = $msgTo;
+        $this->message['from'] = $msgFrom;
+        $this->message['sharedDate'] = $msgSharedDate;
+        $this->db = $database;
     }
     
-    public function dbNoRecords() {
-        echo "<div>No records available.</echo>";
+    // function to get subject
+    
+    public function getMessageSubject() {
+        return $message['subject'];
     }
     
-    public function dbInsertError() {
-        echo "<div>Unable to insert record. Please try again or else contact the system administrator.<br></div>";
+    // function to set subject
+    
+    public function setMessageSubject($msgSubject) {
+        $message['subject'] = $msgSubject;
     }
     
-    public function dbDeleteError() {
-        echo "<div>Unable to delete record. Please try again or else contact the system administrator.<br></div>";
+    // function to get body
+    
+    public function getMessageBody() {
+        return $message['body'];
     }
     
-    public function fileUploadSuccessful() {
-        echo "<div>File upload successful.</div>";
+    // function to set body 
+    
+    public function setMessageBody($msgBody) {
+        $message['body'] = $msgBody;
     }
     
-    public function fileUploadFailed() {
-        echo "<div>File upload failed. Please try again or else contact the system administrator.</div>";
+    // function to get to
+    
+    public function getMessageTo() {
+        return $message['to'];
     }
     
-    public function fileDuplicate() {
-        echo "<div>File has already been uploaded. Please try a different file.</div>";
+    // function to set to
+    
+    public function setMessageTo($msgTo) {
+        $message['to'] = $msgTo;
     }
     
-    public function fileUnsupported() {
-        echo "<div>File type not supported. Please try a different file.</div>";
+    // function to get from
+    
+    public function getMessageFrom() {
+        return $message['from'];
     }
     
-    public function fileExceedsMaxSize() {
-        echo "<div>Max file size exceeded. Please try a different file.</div>";
+    // function to set from
+    
+    public function setMessageFrom($msgFrom) {
+        $message['from'] = $msgFrom;
     }
     
-    public function loginSuccessful() {
-        echo '<div>Successfully logged in.</div>';
+    // function to get shared date
+    
+    public function getMessageSharedDate() {
+        return $message['sharedDate'];
     }
     
-    public function loginUnsuccessful() {
-        echo '<div>Login unsucessful. Please try again.</div>';
+    // function to set shared date
+    
+    public function setMessageSharedDate($msgDate) {
+        $message['sharedDate'] = $msgDate;
     }
     
-    public function missingUserAndPW() {
-        echo '<div>Please provide a valid username and password.</div>';
+    // public to send message
+    
+    public function sendMessage() {
+        
+        // open database connection
+        
+        $this->con = $this->db->getDBConnection();
+        
+        // check for errors
+        
+        if (!$this->con->connect_error ) {
+            
+            // prepare insert statement
+            
+            $statement = $this->con->prepare("CALL usp_addMessage(?, ?, ?, ?, ?);");
+            $statement->bind_param('sssss', $msgSubject, $msgBody, $msgSharedDate, $msgFrom, $msgTo);
+            
+            // get message properties
+        
+            $msgSubject = $this->message['subject'];
+            $msgBody = $this->message['body'];
+            $msgSharedDate = $this->message['sharedDate'];
+            $msgFrom = $this->message['from'];
+            $msgTo = $this->message['to'];
+        
+            // add message
+        
+            $statement->execute();
+            
+            // check for errors
+            
+            if ($statement->error != '') {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+        
+        // close database connection
+        
+        $this->db->closeDBConnection();
     }
     
-    public function missingUser() {
-        echo '<div>Please provide a valid username.</div>';
+    // function to get message id
+    
+    public function getMessageID() {
+        
+        // open database connection
+        
+        $this->con = $this->db->getDBConnection();
+        
+        // get message details
+        
+        $subject = $this->message['subject'];
+        $body = $this->message['body'];
+        $to = $this->message['to'];
+        $from = $this->message['from'];
+        $sharedDate = $this->message['sharedDate'];
+        
+        // check for errors
+        
+        if (!$this->con->connect_error ) {
+            
+            // get message ID
+        
+            $query = "CALL usp_getMessageID('$subject', '$body', '$sharedDate', '$from', '$to');";
+            $result = mysqli_query($this->con, $query);
+            $messageID = mysqli_fetch_array($result, MYSQLI_NUM)[0];
+            
+            if ($messageID) {
+                return $messageID;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        
+        // close result and close database connection
+        
+        $result->close();
+        $this->db->closeDBConnection();
     }
     
-    public function missingPW() {
-        echo '<div>Please provide a valid password.</div>';
+    // function to get message
+    
+    public function getMessage() {
+        return $this->message;
     }
     
-    public function accountTaken($appUser) {
-        echo "<div>The username $appUser has already been taken. Please try again.</div>";
+    // function to set message 
+    
+    public function setMessage($msgSubject, $msgBody, $msgTo, $msgFrom, $msgSharedDate) {
+        $this->message['subject'] = $msgSubject;
+        $this->message['body'] = $msgBody;
+        $this->message['to'] = $msgTo;
+        $this->message['from'] = $msgFrom;
+        $this->message['sharedDate'] = $msgSharedate;
     }
     
-    public function emailTaken($appUserEmail) {
-        echo "<div>There is already an account associated with $appUserEmail. Please try again.</div>";
-    }
-    
-    public function accountCreationUnsuccessful($appUser) {
-        echo "<div>Unable to create $appUser account. Please try again.</div>";
-    }
-    
-    public function invalidEntries() {
-        echo '<div>Please provide valid entries for each field.</div>';
-    }
-    
-    public function invalidEmail() {
-        echo '<div>Please provide a valid email address.</div>';
-    }
 }

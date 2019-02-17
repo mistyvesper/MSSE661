@@ -23,7 +23,7 @@
     $documentCount = $collection->getDocumentCount();
     $docTypes = $collection->getDocumentTypes();
     $docUploadDate = (string)date("Y/m/d");
-    $message = new Message();
+    $infoMessage = new InfoMessage();
     
     // get docType after form submission
             
@@ -69,41 +69,35 @@
             // upload file to temporary folder and then move to user folder
 
             if (move_uploaded_file($_FILES['filename']['tmp_name'], $uploadPath)) {
-                $message->fileUploadSuccessful();
+                $infoMessage->fileUploadSuccessful();
             } else {
-                $message->fileUploadFailed();
+                $infoMessage->fileUploadFailed();
             };
         } else if ($collection->getDocumentID($document) > 0) {
-            $message->fileDuplicate();
+            $infoMessage->fileDuplicate();
         } else if ($docExtension == '') {
-            $message->fileUnsupported();
+            $infoMessage->fileUnsupported();
         } else {
-            $message->fileUploadFailed();
+            $infoMessage->fileUploadFailed();
         }
     } else if ($_FILES && ($_FILES['filename']['error'] == 1 || $_FILES['filename']['error'] == 2)) {
-        $message->fileExceedsMaxSize();
+        $infoMmessage->fileExceedsMaxSize();
     } else if ($_FILES && $_FILES['filename']['error'] > 3) {
-        $message->fileUploadFailed();
+        $infoMessage->fileUploadFailed();
     }
         
     // display form
 
-    echo "<html>
-            <head>
-                <meta charset='UTF-8'>
-                <title>Document Upload</title>
-            </head>
-            <body>
-                <h1>Upload Documents</h1>
-                <br>
-                <div><form method='post' action='uploadDocument.php' enctype='multipart/form-data'>
-                <table>
-                    <tr>
-                        <th align='left' style='width:100px'>Document Type</th>
-                        <th align='left'>Select File</th>
-                    </tr>
-                    <tr>
-                        <td><select name='docType'>";
+    echo "<h1>Upload Documents</h1>
+            <br>
+            <div><form method='post' action='uploadDocument.php' enctype='multipart/form-data'>
+            <table>
+                <tr>
+                    <th align='left' style='width:100px'>Document Type</th>
+                    <th align='left'>Select File</th>
+                </tr>
+                <tr>
+                    <td><select name='docType'>";
     
     foreach ($docTypes AS $docType) {
         echo "<option value='$docType'>$docType</option>";

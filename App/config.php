@@ -8,7 +8,7 @@
  * @author misty
  */
 
-require_once '../Resources/fileMaintenance.php';
+require_once($rootDirectory . '/Resources/fileMaintenance.php');
 
 // create upload and tmp folders
 // https://stackoverflow.com/questions/8668776/get-root-directory-path-of-a-php-project

@@ -14,14 +14,25 @@ require_once 'fileMaintenance.php';
 
 function checkForExistingAccount($user, $dbConnection) {
     
-    // get user from database
+    // open database connection
+        
+    $con = $dbConnection->getDBConnection();
+
+    // check for errors
+
+    if (!$con->connect_error) {
     
-    $dbUser = mysqli_fetch_array(mysqli_query($dbConnection, "SELECT userName FROM user WHERE userName = '$user'"), MYSQLI_NUM)[0];
-    
-    // check if user exists
-    
-    if ($user != '' && $dbUser != '') {
-        return true;
+        // get user from database
+
+        $dbUser = mysqli_fetch_array(mysqli_query($con, "SELECT userName FROM user WHERE userName = '$user'"), MYSQLI_NUM)[0];
+
+        // check if user exists
+
+        if ($user != '' && $dbUser != '') {
+            return true;
+        } else {
+            return false;
+        }
     } else {
         return false;
     }
@@ -56,13 +67,31 @@ function createAccount($userEmail, $user, $password, $dbConnection) {
         $token = hash("ripemd128", "$salt1$password$salt2");
     }
     
-    // try inserting new user
-    
-    $result = mysqli_query($dbConnection, "INSERT INTO user (userEmail, userName, userPassword) VALUES ('$userEmail', '$user', '$token');");
-    
-    // return result
-    
-    return $result;
+    // check for errors
+
+    if (!$dbConnection->connect_error) {
+
+        // prepare update statement
+
+        $statement = $dbConnection->prepare("CALL usp_addUser(?, ?, ?, ?, ?);");
+        $statement->bind_param('sss', $tempUser, $tempEmail, $tempPass);
+
+        // get properties
+
+        $tempUser = $user;
+        $tempEmail = $userEmail;
+        $tempPass = $token;
+
+        $statement->execute();
+
+        // check for errors
+
+        if ($statement->error != '') {
+            return false;
+        } else {
+            return true;
+        } 
+    }  
 }
 
 // function to create user directory
@@ -78,4 +107,83 @@ function createUserDirectory($user, $uploadDirectory) {
         }
         createDirectory($userDirectory);
     }
+}
+
+// function to update profile
+
+function updateAccount($oldUserName, $newUserName, $newEmail, $newFirstName, $newLastName, $db) {
+ 
+    // open database connection
+        
+    $con = $db->getDBConnection();
+
+    // check for errors
+
+    if (!$con->connect_error) {
+
+        // prepare update statement
+
+        $statement = $con->prepare("CALL usp_updateUser(?, ?, ?, ?, ?);");
+        $statement->bind_param('sssss', $oldUser, $newUser, $email, $firstName, $lastName);
+
+        // get properties
+
+        $oldUser = $oldUserName;
+        $newUser = $newUserName;
+        $email = $newEmail;
+        $firstName = $newFirstName;
+        $lastName = $newLastName;
+
+        $statement->execute();
+
+        // check for errors
+
+        if ($statement->error != '') {
+            return false;
+        } else {
+            return true;
+        } 
+    }  
+
+    // close database connection
+
+    $db->closeDBConnection();
+}
+
+// function to update password
+
+function updatePassword($userName, $newPassword, $db) {
+ 
+    // open database connection
+        
+    $con = $db->getDBConnection();
+
+    // check for errors
+
+    if (!$con->connect_error) {
+
+        // prepare update statement
+
+        $statement = $con->prepare("CALL usp_updatePassword(?, ?);");
+        $statement->bind_param('ss', $tempUser, $tempPass);
+
+        // get properties
+
+        $tempUser = $userName;
+        $tempPass = $newPassword;
+
+        $statement->execute();
+
+        // check for errors
+
+        if ($statement->error != '') {
+            return false;
+        } else {
+            return true;
+        } 
+    }  
+
+    // close database connection
+
+    $db->closeDBConnection();
 }

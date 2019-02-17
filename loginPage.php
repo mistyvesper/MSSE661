@@ -9,6 +9,12 @@
  */
         
     require_once 'header.php';
+    
+    // close any active sessions
+    
+//    if ($_SESSION) {
+//        session_destroy();
+//    }
 
     // declare and initialize variables
 
@@ -23,6 +29,7 @@
     if ($userName != '' && $password != '' && $submitted == 1) {
         validateUser($userName, $password, $dbConnection);
         if (isset($_SESSION['user'])) {
+            $loggedIn = TRUE;
             header('Location: index.php');     
         } 
     } 
@@ -61,11 +68,11 @@
     // check for errors
     
     if ($submitted == 1 && $userName != '' && $password != '' && !isset($_SESSION['user'])) {
-        Message::loginUnsuccessful();
+        InfoMessage::loginUnsuccessful();
     } else if ($submitted == 1 && $userName == '' && $password == '') {
-        Message::missingUserAndPW();
+        InfoMessage::missingUserAndPW();
     } else if ($submitted == 1 && $userName == '') {
-        Message::missingUser();
+        InfoMessage::missingUser();
     } else if ($submitted == 1 && $password == '') {
-        Message::missingPW();
+        InfoMessage::missingPW();
     }

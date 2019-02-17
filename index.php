@@ -7,52 +7,31 @@
  * 
  * @author misty
  */
-    
+
     require_once 'header.php';
-    
-    // check if user logged in
-    
-    if (!$loggedIn) {
-        header('Location: loginPage.php');
-    }
-
-    // create database connection
-
-    $database = new Database($dbHost, $dbUser, $dbPassword, $dbDBName);
-
-    // create Collection
-
-    $collection = new Collection($appUser, $database);
-    
-    // capitalize appUser
-    
-    $upperAppUser = strtoupper($appUser);
     
     // display web page
 
-    echo "<html>
-            <head>
-                <meta charset='UTF-8'>
-                <title>Nano-site</title>
-            </head>
-            <body>
-                <div>
-                    <table style='width:100%'>
-                        <tr>
-                            <td style='width:3%'><img src='Media/person_icon.png' style='width:35px;height:35px;'></td>
-                            <td style='width:18%'>Signed in as: $upperAppUser</td>
-                            <td style='width:80%' align='right'><a href='logoutPage.php'>Logout</a></td>
-                        </tr>
-                    </table>
-                </div>
-                <h1>Documents</h1>
-                <div>
-                    <table>
-                        <td style='align:left'><input type='text'><button>Search</button></td>
-                        <td style='align:right'><a href='uploadDocument.php'>Upload Document</a></td>
-                    </table>
-                </div>
-                <br>";
+    echo "<h1>Documents</h1>
+            <div>
+
+                <table>
+                    <td><form  method='post' action='index.php' enctype='multipart/form-data'><input type='text' name='searchValue'><input type='submit' name='search' value='Search'></form></td>
+                    <td><form  method='post' action='index.php' enctype='multipart/form-data'><input type='submit' name='clearSearch' value='Clear Search'></form></td>
+                    <td><form  method='post' action='uploadDocument.php' enctype='multipart/form-data'><input type='submit' name='upload' value='Upload Documents'></form></td>
+                </table> 
+            </div>
+            <br>";
+    
+    // show messages
+    
+    if (isset($_SESSION['displayMessage'])) {
+        echo $_SESSION['displayMessage'];
+        echo "<br>";
+    } else if (isset($_SESSION['searchValue'])) {
+        echo $_SESSION['searchValue'];
+        echo "<br>";
+    }
     
     // show Collection
 

@@ -38,7 +38,7 @@
     
     // check for existing account, create account as needed, and login if account creation successful
     
-    if ($submitted == 1 && $email != '' && $user != '' && $password != '' && !checkForExistingAccount($user, $dbConnection) && !checkForExistingEmail($email, $dbConnection)) {
+    if ($submitted == 1 && $email != '' && $user != '' && $password != '' && !checkForExistingAccount($user, $database) && !checkForExistingEmail($email, $dbConnection)) {
         if (createAccount($email, $user, $password, $dbConnection)) {
             mail($emailTo, $emailSubject, $emailMessage, $emailHeaders);
             createUserDirectory($user, $uploadDirectory);
@@ -81,15 +81,15 @@
     // check for existing account
     
     if ($submitted == 1 && ($email == '' || $user == '' || $password == '')) {
-        Message::invalidEntries();
+        InfoMessage::invalidEntries();
     } else if ($submitted == 1 && strpos($email, '@') === false) {
-        Message::invalidEmail();
+        InfoMessage::invalidEmail();
     } else if ($accountCreateFailed == 1) {
-        Message::accountCreationUnsucessful($user);
+        InfoMessage::accountCreationUnsucessful($user);
     } else if ($submitted == 1 && $email != '' && $user != '' && $password != '' && checkForExistingEmail($email, $dbConnection)) {
-        Message::emailTaken($email);
-    } else if ($submitted == 1 && $email != '' && $user != '' && $password != '' && checkForExistingAccount($user, $dbConnection)) {
-        Message::accountTaken($user);
+        InfoMessage::emailTaken($email);
+    } else if ($submitted == 1 && $email != '' && $user != '' && $password != '' && checkForExistingAccount($user, $database)) {
+        InfoMessage::accountTaken($user);
     }  
     
     // close database connection

@@ -8,6 +8,9 @@
  * @author misty
  */
 
+$directory = dirname(dirname(__FILE__));
+require_once($directory . '/header.php');
+
 // function to validate user
 
 function validateUser($user, $password, $dbConnection) {
