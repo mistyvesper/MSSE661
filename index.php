@@ -27,10 +27,10 @@
     
     if (isset($_SESSION['displayMessage'])) {
         echo $_SESSION['displayMessage'];
-        echo "<br>";
+        echo "<br><br>";
     } else if (isset($_SESSION['searchValue'])) {
         echo $_SESSION['searchValue'];
-        echo "<br>";
+        echo "<br><br>";
     }
     
     // show Collection

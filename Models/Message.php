@@ -190,4 +190,20 @@ class Message {
         $this->message['sharedDate'] = $msgSharedate;
     }
     
+    // function to show message
+    
+    public function showMessage() {
+        
+        $sharedBy = $this->message['from'];
+        $subject = $this->message['subject'];
+        $body = $this->message['body'];
+        
+        echo "<div><h4>From</h4>"
+            . "$sharedBy"
+            . "<h4>Subject</h4>"
+            . "$subject"
+            . "<h4>Message</h4>"
+            . "$body"
+            . "<h4>Attachments</h4></div>";
+    }
 }

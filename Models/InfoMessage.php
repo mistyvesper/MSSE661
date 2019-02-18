@@ -34,24 +34,44 @@ class InfoMessage {
         return "<div>No records available.</echo>";
     }
     
+    public function documentsDeleted() {
+        return "<div>The document(s) you selected have now been deleted.</echo>";
+    }
+    
+    public function documentsNotDeleted() {
+        return "<div>The document(s) you selected could not be deleted. Please try again.</echo>";
+    }
+    
+    public function documentsNotUpdated() {
+        return "<div>The document(s) you modified could not be updated. Please try again.</echo>";
+    }
+    
+    public function documentsUpdated() {
+        return "<div>The document(s) you modified have now been updated.</echo>";
+    }
+    
     public function emailTaken($appUserEmail) {
         return "<div>There is already an account associated with $appUserEmail. Please try again.</div>";
     }
     
-    public function fileDuplicate() {
-        return "<div>File has already been uploaded. Please try a different file.</div>";
+    public function fileDuplicate($file) {
+        return "<div>$file has already been uploaded. Please try a different file.</div>";
     }
     
-    public function fileExceedsMaxSize() {
-        return "<div>Max file size exceeded. Please try a different file.</div>";
+    public function fileExceedsMaxSize($file) {
+        return "<div>$file max file size exceeded. Please try a different file.</div>";
     }
     
-    public function fileUnsupported() {
-        return "<div>File type not supported. Please try a different file.</div>";
+    public function fileNoFilesSelected() {
+        return "<div>No file(s) selected. Please try again.</div>";
+    }
+    
+    public function fileUnsupported($file) {
+        return "<div>$file file type not supported. Please try a different file.</div>";
     }
 
-    public function fileUploadFailed() {
-        return "<div>File upload failed. Please try again or else contact the system administrator.</div>";
+    public function fileUploadFailed($file) {
+        return "<div>$file upload failed. Please try again or else contact the system administrator.</div>";
     }
     
     public function fileUploadSuccessful() {
@@ -80,6 +100,18 @@ class InfoMessage {
     
     public function messageSent($sentTo) {
         return "<div>Your message has been sent to $sentTo.</div>";
+    }
+    
+    public function messagesDeleted() {
+        return "<div>The message(s) you selected have been successfully deleted. </div>";
+    }
+    
+    public function messagesNo() {
+        return "<div>You have received no messages.</div>";
+    }
+    
+    public function messagesNotDeleted() {
+        return "<div>The message(s) you selected could not be deleted. Please try again. </div>";
     }
     
     public function missingTo() {

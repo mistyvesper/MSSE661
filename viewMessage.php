@@ -14,8 +14,12 @@
 
     echo "<h1>Received Documents</h1>";
     
-    // show Collection
+    // get documents by message id
+    $collection->getReceivedDocumentsByMessage($_SESSION['messageID']);
+    $messages->getMessageByID($_SESSION['messageID'])->showMessage();
 
+    // show Message
+    
     $collection->showReceivedCollection();
     
     // end of web page
