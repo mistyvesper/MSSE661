@@ -36,7 +36,7 @@ class Collection
 
     public function getDocuments() { 
         
-        if (!isset($_SESSION['collection']) || count($_SESSION['collection']) == 0) {
+        if (!isset($_SESSION['collection']) || (count($_SESSION['collection']) == 0 && !isset($_SESSION['searchValue']))) {
             
             // reset collection array
         
@@ -71,6 +71,39 @@ class Collection
         } else {
             $this->collection = $_SESSION['collection'];
         }  
+    }
+    
+    // function to get document by document ID
+    
+    public function getDocumentByID($docID) {
+        
+        // open database connection
+
+        $this->con = $this->db->getDBConnection();
+
+        // check for errors
+
+        if (!$con->connect_error ) {
+
+            // get document
+
+            $query = "CALL usp_getDocumentByDocID('$docID');";
+            $result = mysqli_query($this->con, $query);
+            while ($row = mysqli_fetch_assoc($result)) {
+                $document = $row;
+            }
+        } else {
+            $_SESSION['displayMessage'] = InfoMessage::dbConnectError();
+        }
+
+        // close result and database connection
+
+        $result->close();
+        $this->db->closeDBConnection();
+        
+        // return document
+        
+        return $document;
     }
     
     // function to get received collection
@@ -116,6 +149,49 @@ class Collection
         } 
     }
     
+    // function to get shared collection
+    
+    public function getSharedDocuments() {
+        
+        if (!isset($_SESSION['sharedCollection'])) {
+            
+            // reset shared collection array
+        
+            $this->sharedCollection = [];
+
+            // open database connection
+
+            $this->con = $this->db->getDBConnection();
+
+            // check for errors
+
+            if (!$this->con->connect_error) {
+
+                // get documents
+
+                $query = "CALL usp_getSharedDocumentsByUser('$this->collectionUser');";
+                $result = mysqli_query($this->con, $query);
+                while ($row = mysqli_fetch_assoc($result)) {
+                    $this->sharedCollection[] = $row;
+                }
+                
+                // close result and database connection
+
+                $result->close();
+                $this->db->closeDBConnection();
+                
+                $_SESSION['sharedCollection'] = $this->sharedCollection;
+                return $this->sharedCollection;
+            } else {
+                return false;
+            }
+
+            
+        } else {
+            $this->sharedCollection = $_SESSION['sharedCollection'];
+        } 
+    }
+    
     // function to get received documents by message
     
     public function getReceivedDocumentsByMessage($msgID) {
@@ -149,6 +225,44 @@ class Collection
         } else {
             return false;
         } 
+    }
+    
+    // function to get received document by id
+    
+    public function getReceivedDocumentByID($receivedDocID) {
+        
+        // open database connection
+
+        $this->con = $this->db->getDBConnection();
+
+        // check for errors
+
+        if (!$con->connect_error ) {
+
+            // get document
+
+            $query = "CALL usp_getReceivedDocumentByDocID('$receivedDocID');";
+            $result = mysqli_query($this->con, $query);
+            while ($row = mysqli_fetch_assoc($result)) {
+                $receivedDocument = $row;
+            }
+        } else {
+            $_SESSION['displayMessage'] = InfoMessage::dbConnectError();
+        }
+
+        // close result and database connection
+
+        $result->close();
+        $this->db->closeDBConnection();
+        
+        // return document
+        
+        if (count($receivedDocument) > 0) {
+            return $receivedDocument; 
+        } else {
+            $_SESSION['displayMessage'] = InfoMessage::dbDeleteError();
+            return false;
+        }
     }
     
     // function to get shared documents
@@ -194,6 +308,80 @@ class Collection
         } 
     }
     
+    // function to get sent documents by message
+    
+    public function getSentDocumentsByMessage($msgID) {
+            
+        // reset received collection array
+
+        $this->sharedCollection = [];
+
+        // open database connection
+
+        $this->con = $this->db->getDBConnection();
+
+        // check for errors
+
+        if (!$this->con->connect_error) {
+
+            // get documents
+
+            $query = "CALL usp_getSentDocumentsByMsgID('$msgID');";
+            $result = mysqli_query($this->con, $query);
+            while ($row = mysqli_fetch_assoc($result)) {
+                $this->sharedCollection[] = $row;
+            }
+
+            // close result and database connection
+
+            $result->close();
+            $this->db->closeDBConnection();
+
+            $_SESSION['sharedCollection'] = $this->sharedCollection;
+        } else {
+            return false;
+        } 
+    }
+    
+    // function to get shared document by id
+    
+    public function getSharedDocumentByID($sharedDocID) {
+        
+        // open database connection
+
+        $this->con = $this->db->getDBConnection();
+
+        // check for errors
+
+        if (!$con->connect_error ) {
+
+            // get document
+
+            $query = "CALL usp_getSharedDocumentByDocID('$sharedDocID');";
+            $result = mysqli_query($this->con, $query);
+            while ($row = mysqli_fetch_assoc($result)) {
+                $sharedDocument = $row;
+            }
+        } else {
+            $_SESSION['displayMessage'] = InfoMessage::dbConnectError();
+        }
+
+        // close result and database connection
+
+        $result->close();
+        $this->db->closeDBConnection();
+        
+        // return document
+        
+        if (count($sharedDocument) > 0) {
+            return $sharedDocument;  
+        } else {
+            $_SESSION['displayMessage'] = InfoMessage::dbDeleteError();
+            return $false;
+        }
+        
+    }
+    
     // function to get document types
     
     public function getDocumentTypes() {
@@ -222,68 +410,7 @@ class Collection
             return $this->docTypes;
         } else {
             return false;
-        }
-        
-        
-    }
-    
-    // function to get document ID
-    
-    public function getDocumentID($document) {
-        
-        // open database connection
-        
-        $this->con = $this->db->getDBConnection();
-        
-        // get document details
-        
-        $title = $document->getDocumentTitle();
-        $type = $document->getDocumentType();
-        $extension = $document->getDocumentExtension();
-        
-        // check for errors
-        
-        if (!$this->con->connect_error ) {
-            
-            // get document ID
-        
-            $query = "CALL usp_getDocumentID('$title', '$type', '$extension', '$this->collectionUser');";
-            $result = mysqli_query($this->con, $query);
-            $documentID = mysqli_fetch_array($result, MYSQLI_NUM)[0];
-            
-            // close result and close database connection
-        
-            $result->close();
-            $this->db->closeDBConnection();
-            
-            if ($documentID) {
-                return $documentID;
-            } else {
-                return 0;
-            }
-        } else {
-            return false;
-        }
-    }
-    
-    // function to get document by index
-    
-    public function getDocumentByIndex($index) {
-        
-        // reload documents
-        
-        $this->getDocuments();
-        
-        // iterate through collection to find document
-        
-        foreach ($this->collection as $key => $document) {
-            if ($key == $index) {
-                return $document;
-                break;
-            } 
-        }
-        
-        return false;
+        } 
     }
 
     // function to add document to collection
@@ -332,52 +459,6 @@ class Collection
         $this->db->closeDBConnection();
     }
     
-    // fucntion to add document to received collection
-    
-    public function addReceivedDocument($sharedDocument, $sharedWith, $msgID) {
-        
-        // open database connection
-        
-        $this->con = $this->db->getDBConnection();
-        
-        // check for errors
-        
-        if (!$this->con->connect_error ) {
-            
-            // prepare insert statement
-            
-            $statement = $this->con->prepare("CALL usp_insertReceivedDocument(?, ?, ?, ?, ?, ?, ?);");
-            $statement->bind_param('ssssssi', $title, $type, $extension, $size, $receivedBy, $receivedFrom, $messageID);
-            
-            // get document properties
-        
-            $title = $sharedDocument['title'];
-            $type = $sharedDocument['type'];
-            $extension = strtoupper($sharedDocument['extension']);
-            $size = $sharedDocument['size'];
-            $receivedBy = $sharedWith;
-            $receivedFrom = $this->collectionUser;
-            $messageID = $msgID;
-        
-            // add document
-        
-            $statement->execute();
-            
-            // check for errors
-            
-            if ($statement->error != '') {
-                return false;
-            } 
-        } else {
-            return false;
-        }
-        
-        // close database connection
-        
-        $this->db->closeDBConnection();
-        return true;
-    }
-    
     // function to add document to shared documents
     // note that the document is "sent" to another user until it has been updated with a sharedWith value (see shareDocuments function)
     
@@ -393,15 +474,12 @@ class Collection
             
             // prepare insert statement
             
-            $statement = $this->con->prepare("CALL usp_insertSharedDocument(?, ?, ?, ?, ?);");
-            $statement->bind_param('sssss', $title, $type, $extension, $size, $sharedBy);
+            $statement = $this->con->prepare("CALL usp_insertSharedDocument(?, ?);");
+            $statement->bind_param('is', $docID, $sharedBy);
             
             // get document properties
         
-            $title = $sharedDocument['title'];
-            $type = $sharedDocument['type'];
-            $extension = $sharedDocument['extension'];
-            $size = $sharedDocument['size'];
+            $docID = $sharedDocument['documentID'];
             $sharedBy = $this->collectionUser;
         
             // add document
@@ -425,32 +503,123 @@ class Collection
         $this->db->closeDBConnection();
     }
     
+    // function to add received document to collection
+    
+    public function addReceivedDocumentToCollection($receivedDoc) {
+        
+        // open database connection
+        
+        $this->con = $this->db->getDBConnection();
+        
+        // check for errors
+        
+        if (!$this->con->connect_error ) {
+            
+            // prepare insert statement
+            
+            $statement = $this->con->prepare("CALL usp_insertDocument(?, ?, ?, ?, ?);");
+            $statement->bind_param('sssss', $title, $type, $extension, $size, $user);
+            
+            // get document properties
+        
+            $title = $receivedDoc['title'];
+            $type = $receivedDoc['type'];
+            $extension = $receivedDoc['extension'];
+            $lowerExtension = strtolower($extension);
+            $size = $receivedDoc['size'];
+            $user = $this->collectionUser;
+            $receivedFrom = $receivedDoc['receivedFrom'];
+            $receivedDate = str_replace('-', '', str_replace(' ', '', str_replace(':', '', $receivedDoc['receivedDate'])));
+            $source = dirname(dirname(__FILE__)) . "/uploadedFiles/$receivedFrom/sharedFiles/$receivedDate/$title.$lowerExtension";
+            $destination = dirname(dirname(__FILE__)) . "/uploadedFiles/$user/$type/$title.$lowerExtension";
+
+            // create new type directory as needed
+
+            createDirectory(dirname($destination));
+
+            // rename document
+
+            if (file_exists($destination)) {
+                return false;
+            } else if (file_exists($source) && copy($source, $destination)) {
+
+                // update document
+
+                $statement->execute();
+
+                // check for errors
+
+                if ($statement->error != '') {
+                    unlink($destination);
+                    return false;
+
+                } else {
+                    unset($_SESSION['collection']);
+                    $_SESSION['collection'] = $this->getDocuments();
+                } 
+            }  
+        } else {
+            return false;
+        }
+        
+        // close database connection
+        
+        $this->db->closeDBConnection();
+        return true;
+        
+    }
+    
     // function to share documents
     
     public function shareDocuments($subject, $body, $shareWith, $sharedDocuments, $sharedDate) {
         
         $msg = new Message($subject, $body, $shareWith, $this->collectionUser, $sharedDate, $this->db);
+        $msgs = new Messages($this->collectionUser, $this->db);
+        $shareDate = str_replace('-', '', str_replace(' ', '', str_replace(':', '', $sharedDate)));
+        $destinationFolder = dirname(dirname(__FILE__)) . '/uploadedFiles/' . $this->collectionUser . '/sharedFiles/' . sanitizeString($shareDate) . '/';
+        createDirectory($destinationFolder);
         
         if ($msg->sendMessage() && $msg->getMessageID()) {
-            $msgID = $msg->getMessageID();
-            foreach($sharedDocuments as $sharedDocument) {
-                if (!$this->addReceivedDocument($sharedDocument, $shareWith, $msgID)) {
-                    return false;
-                }
-            }
             
-            if (!$this->updateSharedDocuments($sharedDocuments, $shareWith, $sharedDate, $msgID)) {
-                return false;
-            } else {
-                return true;
+            $msgID = $msg->getMessageID();
+            
+            foreach($sharedDocuments as $sharedDocument) {
+                
+                $type = $sharedDocument['type'];
+                $title = $sharedDocument['title'];
+                $extension = strtolower($sharedDocument['extension']);
+                $destination = $destinationFolder . '/' . $title . '.' . $extension;
+                $source = dirname(dirname(__FILE__)) . '/uploadedFiles/' . $this->collectionUser . '/' . $type . '/' . $title . '.' . $extension;
+                
+                if (copy($source, $destination)) {
+                    if (!$this->updateSharedDocument($sharedDocument, $shareWith, $sharedDate, $msgID)) {
+                        $msgs->deleteMessage($msgID);
+                        unset($msg);
+                        unset($msgs);
+                        return false;
+                    } 
+                } else {
+                    $msgs->deleteMessage($msgID);
+                    unset($msg);
+                    unset($msgs);
+                    return false;
+                }      
             }
+        } else {
+            return false;
         }
+        
+        return true;
     }
     
     // function to update document properties (using optional parameters)
 
     public function updateDocument($document, $newDocType = '', $newDocTitle = '') {
         
+        // get documents
+        
+        $this->getDocuments();
+
         // open database connection
         
         $this->con = $this->db->getDBConnection();
@@ -466,11 +635,12 @@ class Collection
 
                     // prepare insert statement
 
-                    $statement = $this->con->prepare("CALL usp_updateDocument(?, ?, ?, ?, ?, ?);");
-                    $statement->bind_param('ssssss', $oldTitle, $newTitle, $oldType, $newType, $extension, $user);
+                    $statement = $this->con->prepare("CALL usp_updateDocument(?, ?, ?);");
+                    $statement->bind_param('iss', $docID, $newTitle, $newType);
 
                     // get document properties
 
+                    $docID = $item['documentID'];
                     $oldType = $item['type'];
                     $newType = $newDocType;
                     $oldTitle = $item['title'];
@@ -481,7 +651,11 @@ class Collection
                     $oldFilename = dirname(dirname(__FILE__)) . "/uploadedFiles/$user/$oldType/$oldTitle.$lowerExtension";
                     $newFilename = dirname(dirname(__FILE__)) . "/uploadedFiles/$user/$newType/$newTitle.$lowerExtension";
                     
+                    // create new type directory as needed
+                    
                     createDirectory(dirname($newFilename));
+                    
+                    // rename document
 
                     if (rename($oldFilename, $newFilename)) {
                         
@@ -498,6 +672,7 @@ class Collection
                         } else {
                             unset($_SESSION['collection']);
                             $_SESSION['collection'] = $this->getDocuments();
+                            break;
                         } 
                     }  
                 }
@@ -514,7 +689,7 @@ class Collection
     
     // function to update shared documents
     
-    public function updateSharedDocuments($sharedDocuments, $sharedWith, $sharedDate, $msgID) {
+    public function updateSharedDocument($sharedDocument, $sharedWith, $sharedDate, $msgID) {
         
         // open database connection
         
@@ -522,42 +697,33 @@ class Collection
         
         // check for errors
         
-        if (count($sharedDocuments) > 0 && checkForExistingAccount($sharedWith, $this->db) && !$this->con->connect_error) {
-            
-            foreach($sharedDocuments as $sharedDocument) {
+        if (checkForExistingAccount($sharedWith, $this->db) && !$this->con->connect_error) {
                 
-                // prepare insert statement
+            // prepare insert statement
 
-                $statement = $this->con->prepare("CALL usp_updateSharedDocument(?, ?, ?, ?, ?, ?, ?);");
-                $statement->bind_param('ssssssi', $docTitle, $docType, $docExtension, $docSharedWithUser, $docSharedByUser, $docSharedDate, $docMessageID);
+            $statement = $this->con->prepare("CALL usp_updateSharedDocument(?, ?, ?, ?);");
+            $statement->bind_param('issi', $sharedDocID, $docSharedWithUser, $docSharedDate, $docMessageID);
 
-                // get document properties
+            // get document properties
 
-                $docType = $sharedDocument['type'];
-                $docTitle = $sharedDocument['title'];
-                $docExtension = strtoupper($sharedDocument['extension']);
-                $docSharedByUser = $this->collectionUser;
-                $docSharedWithUser = $sharedWith;
-                $docSharedDate = $sharedDate;
-                $docMessageID = $msgID;
-                
-                mysqli_query($this->con, "CALL usp_updateSharedDocument('$docTitle', '$docType', '$docExtension', '$docSharedWithUser', '$docSharedByUser', '$docSharedDate', '$docMessageID');");
+            $sharedDocID = $sharedDocument['sharedDocumentID'];
+            $docSharedWithUser = $sharedWith;
+            $docSharedDate = $sharedDate;
+            $docMessageID = $msgID;
 
-                $statement->execute();
+            $statement->execute();
 
-                // check for errors
+            // check for errors
 
-                if ($statement->error != '') {
-                    return false;
-                }
-            }  
+            if ($statement->error != '') {
+                return false;
+            }
         }
         
         // close database connection
         
         $this->db->closeDBConnection();
         return true;
-        
     }
 
     // function to delete document from collection
@@ -574,11 +740,12 @@ class Collection
             
             // prepare delete statement
             
-            $statement = $this->con->prepare("CALL usp_deleteDocument(?, ?, ?, ?);");
-            $statement->bind_param('ssss', $title, $type, $extension, $user);
+            $statement = $this->con->prepare("CALL usp_deleteDocument(?);");
+            $statement->bind_param('i', $docID);
             
             // get document properties
 
+            $docID = $document['documentID'];
             $title = $document['title'];
             $type = $document['type'];
             $extension = $document['extension'];
@@ -626,62 +793,6 @@ class Collection
         return true;
     }
     
-    // function to delete document from received collection
-
-    public function deleteReceivedDocument($receivedDocument) {
-        
-        // open database connection
-        
-        $this->con = $this->db->getDBConnection();
-        
-        // check for errors
-        
-        if (!$this->con->connect_error ) {
-            
-            // prepare delete statement
-            
-            $statement = $this->con->prepare("CALL usp_deleteReceivedDocument(?, ?, ?, ?, ?);");
-            $statement->bind_param('sssss', $title, $type, $extension, $receivedBy, $receivedFrom);
-            
-            // get shared document properties
-
-            $title = $receivedDocument['title'];
-            $type = $receivedDocument['type'];
-            $extension = $receivedDocument['extension'];
-            $lowerExtension = strtolower($extension);
-            $receivedBy = $this->collectionUser;
-            $receivedFrom = $receivedDocument['receivedFrom'];
-                
-            // delete received document
-
-            $statement->execute();
-
-            // check for errors
-
-            if ($statement->error != '') {
-                return false;
-            } else {
-
-                // reseed receivedDocumentID
-
-                $this->seed = mysqli_fetch_array(mysqli_query($this->con, "SELECT MAX(receivedDocumentID) FROM receivedDocument;"), MYSQLI_NUM)[0];
-                mysqli_query($this->con, "ALTER TABLE receivedDocument AUTO_INCREMENT = '$this->seed';");
-
-                // get received documents
-
-                unset($_SESSION['receivedCollection']);
-                $_SESSION['receivedCollection'] = $this->getReceivedDocuments();
-            }
-
-        } else {
-            return false;
-        }
-        
-        // close database connection
-        
-        $this->db->closeDBConnection();
-    }
-    
     // function to delete pending shared document
     
     public function deletePendingSharedDocument($sharedDocument) {
@@ -696,11 +807,12 @@ class Collection
             
             // prepare delete statement
             
-            $statement = $this->con->prepare("CALL usp_deletePendingSharedDocument(?, ?, ?, ?);");
-            $statement->bind_param('ssss', $title, $type, $extension, $sharedBy);
+            $statement = $this->con->prepare("CALL usp_deletePendingSharedDocument(?);");
+            $statement->bind_param('i', $sharedDocID);
             
             // get shared document properties
 
+            $sharedDocID = $sharedDocument['sharedDocumentID'];
             $title = $sharedDocument['title'];
             $type = $sharedDocument['type'];
             $extension = $sharedDocument['extension'];
@@ -719,8 +831,8 @@ class Collection
 
                 // reseed receivedDocumentID
 
-                $this->seed = mysqli_fetch_array(mysqli_query($this->con, "SELECT MAX(sharedDocumentID) FROM sharedDocument;"), MYSQLI_NUM)[0];
-                mysqli_query($this->con, "ALTER TABLE sharedDocument AUTO_INCREMENT = '$this->seed';");
+                $this->seed = mysqli_fetch_array(mysqli_query($this->con, "SELECT MAX(shareDocumentID) FROM shareDocument;"), MYSQLI_NUM)[0];
+                mysqli_query($this->con, "ALTER TABLE shareDocument AUTO_INCREMENT = '$this->seed';");
 
                 // get received documents
 
@@ -743,10 +855,9 @@ class Collection
     public function searchCollection($searchValue) {
         
         $this->getDocuments();
-        $i = 0;
         $searchValueLength = strlen($searchValue);
 
-        foreach($this->collection as $document) {
+        foreach($this->collection as $key => $document) {
 
             $type = strtolower($document['type']);
             $title = strtolower($document['title']);
@@ -759,10 +870,8 @@ class Collection
                     && !strpos($extension, $searchValue) && substr($extension, 0, $searchValueLength) != $searchValue
                     && !strpos($size, $searchValue) && substr($size, 0, $searchValueLength) != $searchValue
                     && !strpos($uploadDate, $searchValue) && substr($uploadDate, 0, $searchValueLength) != $searchValue) {
-                unset($this->collection[$i]);
+                unset($this->collection[$key]);
             }
-
-            $i++;
         }
         
         $_SESSION['collection'] = $this->collection;
@@ -840,17 +949,18 @@ class Collection
                     . "<th align='left' style='width:350px'><input type='submit' name='sortDoc' value='Title' style='width:350px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='sortDoc' value='Extension' style='width:75px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='sortDoc' value='File Size' style='width:75px'></th>"
-                    . "<th align='center' style='width:100px'><input type='submit' name='sortDoc' value='Upload Date' style='width:100px'></th>"
+                    . "<th align='center' style='width:150px'><input type='submit' name='sortDoc' value='Upload Date' style='width:150px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='download' value='Download' style='width:75px'></th></tr>";
             
             foreach ($this->collection as $key => $document) {
                 
+                $documentID = $document['documentID'];
                 $type = $document['type'];
                 $title = $document['title'];
                 $extension = strtolower($document['extension']);
 
-                echo "<tr><td align='center'><input type='checkbox' name='document[]' value='$key'></td>"
-                        . "<td><select name='docType[]' style='width:150px'>";
+                echo "<tr><td align='center' style='width:75px'><input type='checkbox' name='document[]' value='$documentID'></td>"
+                        . "<td style='width:150px'><select name='docType[]' style='width:150px'>";
                 
                 
                 foreach ($docTypes AS $docType) {
@@ -862,16 +972,16 @@ class Collection
                 }
                 
                  echo "</select></td><td><input type='text' style='width:350px' name='docTitle[]' value='"
-                        . $document['title'] . "'></td><td align='center'>"
-                        . $document['extension'] . "</td><td align='center'>"
-                        . $document['size'] . "</td><td align='center'>"
+                        . $document['title'] . "'></td><td align='center' style='width:75px'>"
+                        . $document['extension'] . "</td><td align='center' style='width:75px'>"
+                        . $document['size'] . "</td><td align='center' style='width:150px'>"
                         . $document['uploadDate'] . "</td>"
-                        . "<td align='center'><a href='/uploadedFiles/$this->collectionUser/$type/$title.$extension'>Download</a></td></tr>";
+                        . "<td align='center' style='width:75px'><input type='submit' name='downloadDocument[$documentID]' value='Download'></td></tr>";
             }
 
             echo "</table></div>";
             echo "<br><div><table><tr><td><input type='submit' name='share' value='Share'></td><td></td>"
-                . "<td><input type='submit' name='updateDoc' value='Update'></td><td></td>"
+                . "<td><input type='submit' name='updateDoc[$key]' value='Update'></td><td></td>"
                 . "<td><input type='submit' name='delete' value='Delete'></td></tr></table></div></form>";
         }
     }
@@ -892,49 +1002,47 @@ class Collection
         
             // iterate through shared Collection array to display Documents
 
-            echo "<form  method='post' action='index.php' enctype='multipart/form-data'><div id='nojavascript'><table><tr>"
+            echo "<div><table><tr>"
                     . "<th align='center' style='width:75px'><input type='submit' name='select' value='Select' style='width:75px'></th>"
                     . "<th align='left' style='width:150px'><input type='submit' name='type' value='Type' style='width:150px'></th>"
                     . "<th align='left' style='width:350px'><input type='submit' name='title' value='Title' style='width:350px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='extension' value='Extension' style='width:75px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='size' value='File Size' style='width:75px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='sharedBy' value='From' style='width:75px'></th>"
-                    . "<th align='center' style='width:100px'><input type='submit' name='sharedDate' value='Shared Date' style='width:100px'></th>"
+                    . "<th align='center' style='width:150px'><input type='submit' name='sharedDate' value='Shared Date' style='width:150px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='download' value='Download' style='width:75px'></th></tr>";
             
             foreach ($this->receivedCollection as $key => $receivedDocument) {
                 
+                $receivedDocID = $receivedDocument['receivedDocumentID'];
                 $type = $receivedDocument['type'];
                 $title = $receivedDocument['title'];
                 $extension = $receivedDocument['extension'];
                 $size = $receivedDocument['size'];
                 $sharedBy = $receivedDocument['receivedFrom'];
-                $sharedDate = $receivedDocument['dateReceived'];
-                $url = "/uploadedFiles/$sharedBy/$type/$title.$extension";
+                $sharedDate = $receivedDocument['receivedDate'];
 
-                echo "<tr><td align='center'><input type='checkbox' name='document[]' value='$key'></td>"
-                        . "<td>$type</td>"
-                        . "<td>$title</td>"
-                        . "<td align='center'>$extension</td>"
-                        . "<td align='center'>$size</td>"
-                        . "<td align='center'>$sharedBy</td>"
-                        . "<td align='center'>$sharedDate</td>"
-                        . "<td align='center'><a href='$url'>Download</a></td></tr>";
+                echo "<tr><td align='center' style='width:75px'><input type='checkbox' name='document[]' value='$receivedDocID'></td>"
+                        . "<td style='width:150px'>$type</td>"
+                        . "<td style='width:350px'>$title</td>"
+                        . "<td align='center' style='width:75px'>$extension</td>"
+                        . "<td align='center' style='width:75px'>$size</td>"
+                        . "<td align='center' style='width:75px'>$sharedBy</td>"
+                        . "<td align='center' style='width:150px'>$sharedDate</td>"
+                        . "<td align='center' style='width:75px'><input type='submit' name='downloadReceivedDocument[$receivedDocID]' value='Download'></td></tr>";
             }
 
             echo "</table></div>";
-            echo "<br><div><table><tr><td><input type='submit' name='add' value='Add to My Collection'></td><td></td>"
-                . "<td><input type='submit' name='delete' value='Delete'></td></tr></table></div></form>";
         }
     }
     
-    // function to show shared Collection
+    // function to display sent collection in table
             
-    public function showSharedCollection() {
+    public function showSentCollection() {
         
         // check for existing documents
 
-        if ($this->getPendingSharedDocumentCount() == 0) {
+        if ($this->getSharedDocumentCount() == 0) {
             
             // create new error message
   
@@ -944,43 +1052,76 @@ class Collection
         
             // iterate through shared Collection array to display Documents
 
-            echo "<form  method='post' action='index.php' enctype='multipart/form-data'>"
-                    . "<div><h4>Share With</h4>"
-                    . "<input type='text' name='shareWithUser'>"
-                    . "<h4>Subject</h4>"
-                    . "<input type='text' name='subject' style='width:745px'>"
-                    . "<h4>Message</h4>"
-                    . "<input type='text' name='body' style='width:745px;height:75px'></div>"
-                    . "<div><h4>Attachments</h4>"
-                    . "<table><tr>"
+            echo "<div><table><tr>"
                     . "<th align='center' style='width:75px'><input type='submit' name='select' value='Select' style='width:75px'></th>"
                     . "<th align='left' style='width:150px'><input type='submit' name='type' value='Type' style='width:150px'></th>"
                     . "<th align='left' style='width:350px'><input type='submit' name='title' value='Title' style='width:350px'></th>"
                     . "<th align='center' style='width:75px'><input type='submit' name='extension' value='Extension' style='width:75px'></th>"
-                    . "<th align='center' style='width:75px'><input type='submit' name='size' value='File Size' style='width:75px'></th></tr>";
+                    . "<th align='center' style='width:75px'><input type='submit' name='size' value='File Size' style='width:75px'></th>"
+                    . "<th align='center' style='width:75px'><input type='submit' name='sharedWith' value='To' style='width:75px'></th>"
+                    . "<th align='center' style='width:150px'><input type='submit' name='sharedDate' value='Shared Date' style='width:150px'></th>"
+                    . "<th align='center' style='width:75px'><input type='submit' name='download' value='Download' style='width:75px'></th></tr>";
             
-            foreach ($this->pendingSharedCollection as $key => $sharedDocument) {
+            foreach ($this->sharedCollection as $key => $sharedDocument) {
                 
+                $sharedDocID = $sharedDocument['sharedDocumentID'];
                 $type = $sharedDocument['type'];
                 $title = $sharedDocument['title'];
-                $extension = strtolower($sharedDocument['extension']);
+                $extension = $sharedDocument['extension'];
                 $size = $sharedDocument['size'];
+                $sharedWith = $sharedDocument['sharedWith'];
+                $sharedDate = $sharedDocument['sharedDate'];
 
-                echo "<tr><td align='center'><input type='checkbox' name='document[]' value='$key'></td>"
-                        . "<td>$type</td>"
-                        . "<td>$title</td>"
-                        . "<td align='center'>$extension</td>"
-                        . "<td align='center'>$size</td>"
-                        . "<td align='center'>$sharedBy</td></tr>";
+                echo "<tr><td align='center' style='width:75px'><input type='checkbox' name='document[]' value='$sharedDocID'></td>"
+                        . "<td style='width:150px'>$type</td>"
+                        . "<td style='width:350px'>$title</td>"
+                        . "<td align='center' style='width:75px'>$extension</td>"
+                        . "<td align='center' style='width:75px'>$size</td>"
+                        . "<td align='center' style='width:75px'>$sharedWith</td>"
+                        . "<td align='center' style='width:150px'>$sharedDate</td>"
+                        . "<td align='center' style='width:75px'><input type='submit' name='downloadSharedDocument[$sharedDocID]' value='Download'></td></tr>";
             }
 
             echo "</table></div>";
-            echo "<div><table><tr>"
-                . "<td style='width:75px'><input type='submit' name='deletePendingSharedDocs' value='Delete' style='width:75px'></td>"
-                . "<td></td><td style='width:75px'><input type='submit' name='addPendingSharedDocs' value='Add' style='width:75px'></td></tr></table></div>"
-                . "<br><br><div><table><tr>"
-                . "<td style='width:75px'><input type='submit' name='cancelShare' value='Cancel' style='width:75px'></td>"
-                . "<td></td><td style='width:75px'><input type='submit' name='send' value='Send' style='width:75px'></td></tr></table></div></form>";
+        }
+    }
+    
+    // function to show pending shared Collection
+            
+    public function showPendingSharedCollection() {
+        
+        // check for existing documents
+
+        if ($this->getPendingSharedDocumentCount() == 0) {
+            
+            // create new error message
+  
+            echo infoMessage::attachmentsNoneSelected();
+            
+        } else {
+        
+            // iterate through shared Collection array to display Documents
+
+            echo "<tr><th align='center' style='width:75px'><input type='submit' name='select' value='Select' style='width:75px'></th>"
+                . "<th align='left' style='width:150px'><input type='submit' name='type' value='Type' style='width:150px'></th>"
+                . "<th align='left' style='width:350px'><input type='submit' name='title' value='Title' style='width:350px'></th>"
+                . "<th align='center' style='width:75px'><input type='submit' name='extension' value='Extension' style='width:75px'></th>"
+                . "<th align='center' style='width:75px'><input type='submit' name='size' value='File Size' style='width:75px'></th></tr>";
+            
+            foreach ($this->pendingSharedCollection as $key => $sharedDocument) {
+                
+                $sharedDocID = $sharedDocument['sharedDocumentID'];
+                $type = $sharedDocument['type'];
+                $title = $sharedDocument['title'];
+                $extension = $sharedDocument['extension'];
+                $size = $sharedDocument['size'];
+
+                echo "<tr><td align='center' style='width:75px'><input type='checkbox' name='document[]' value='$sharedDocID'></td>"
+                        . "<td style='width:150px'>$type</td>"
+                        . "<td style='width:350px'>$title</td>"
+                        . "<td align='center' style='width:75px'>$extension</td>"
+                        . "<td align='center' style='width:75px'>$size</td></tr>";
+            }
         }
     }
     
@@ -1022,5 +1163,12 @@ class Collection
     public function getPendingSharedDocumentCount() {
         $this->getPendingSharedDocuments();
         return count($this->pendingSharedCollection);
+    }
+    
+    // function to get shared document count
+    
+    public function getSharedDocumentCount() {
+        $this->getSharedDocuments();
+        return count($this->sharedCollection);
     }
 }

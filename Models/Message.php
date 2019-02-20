@@ -131,6 +131,7 @@ class Message {
         // close database connection
         
         $this->db->closeDBConnection();
+        return true;
     }
     
     // function to get message id
@@ -190,15 +191,32 @@ class Message {
         $this->message['sharedDate'] = $msgSharedate;
     }
     
-    // function to show message
+    // function to show received message
     
-    public function showMessage() {
+    public function showReceivedMessage() {
         
         $sharedBy = $this->message['from'];
         $subject = $this->message['subject'];
         $body = $this->message['body'];
         
         echo "<div><h4>From</h4>"
+            . "$sharedBy"
+            . "<h4>Subject</h4>"
+            . "$subject"
+            . "<h4>Message</h4>"
+            . "$body"
+            . "<h4>Attachments</h4></div>";
+    }
+    
+    // function to show sent message
+    
+    public function showSentMessage() {
+        
+        $sharedBy = $this->message['to'];
+        $subject = $this->message['subject'];
+        $body = $this->message['body'];
+        
+        echo "<div><h4>To</h4>"
             . "$sharedBy"
             . "<h4>Subject</h4>"
             . "$subject"

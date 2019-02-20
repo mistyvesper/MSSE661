@@ -38,7 +38,9 @@
         $appUser = $_SESSION['user'];
         $loggedIn = TRUE;
         $userDirectory = $rootDirectory . '/uploadedFiles/' . $appUser . '/';
+        $userShareDirectory = $userDirectory . '/sharedFiles/';
         createDirectory($userDirectory);
+        createDirectory($userShareDirectory);
     } else if (strpos($_SERVER['SCRIPT_NAME'], "loginPage.php") > 0) {
         $loggedIn = FALSE;
     } else {
@@ -62,10 +64,10 @@
     
     if (isset($_POST['share']) && isset($_POST['document'])) { 
         foreach ($_POST['document'] as $document) {
-            $sharedDocument = $collection->getDocumentByIndex($document);
+            $sharedDocument = $collection->getDocumentByID($document);
             $collection->addSharedDocument($sharedDocument);
         }
-        header('Location: sharedDocuments.php');        
+        header('Location: shareDocuments.php');        
     } 
     
     // send shared documents
@@ -84,18 +86,17 @@
         } else if ($collection->shareDocuments($subject, $body, $shareWith, $sharedDocuments, $sharedDate)) {
             unset($_SESSION['pendingSharedCollection']);
             $_SESSION['pendingSharedCollection'] = $collection->getPendingSharedDocuments();
-            $collection->getPendingSharedDocuments();
             $_SESSION['displayMessage'] = InfoMessage::messageSent($shareWith);
+            header('Refresh: 0; URL=index.php');
         } else {
             $_SESSION['displayMessage'] = InfoMessage::messageNotSent();
         }
-        
     }
     
     // cancel sharing
     
-    else if (isset($_POST['cancelShare']) && isset($_SESSION['sharedCollection'])) {
-        foreach ($_SESSION['sharedCollection'] as $sharedDocument) {
+    else if (isset($_POST['cancelShare']) && isset($_SESSION['pendingSharedCollection'])) {
+        foreach ($_SESSION['pendingSharedCollection'] as $sharedDocument) {
             $collection->deletePendingSharedDocument($sharedDocument);
         }
         header('Location: index.php');
@@ -110,19 +111,49 @@
     // delete pending shared documents
     
     else if (isset($_POST['deletePendingSharedDocs']) && isset($_POST['document'])) {
-        foreach ($_POST['document'] as $document) {
-            $sharedDocument = $collection->getDocumentByIndex($document);
+        foreach ($_POST['document'] as $docID) {
+            $sharedDocument = $collection->getSharedDocumentByID($docID);
             $collection->deletePendingSharedDocument($sharedDocument);
         }
-        header('Location: sharedDocuments.php');
+        header('Location: shareDocuments.php');
     }
     
-    // share pending documents
+    // add received documents to collection
     
-    else if (isset($_POST['share']) && isset($_POST['shareWith'])) {
-        foreach ($_SESSION['sharedCollection'] as $sharedDocument) {
-            $collection->addReceivedDocument($sharedDocument);
+    else if (isset($_POST['addToMyCollection']) && isset($_POST['document'])) {
+        foreach ($_POST['document'] as $receivedDocID) {
+            $receivedDocument = $collection->getReceivedDocumentByID($receivedDocID);
+            $fileName = $receivedDocument['title'] . '.' . strtolower($receivedDocument['extension']);
+            $duplicate = false;
+            
+            foreach ($_SESSION['collection'] as $document) {
+                if ($document['title'] == $receivedDocument['title']
+                        && $document['type'] == $receivedDocument['type']
+                        && $document['extension'] == $receivedDocument['extension']) {
+                    $duplicate = true;
+                    break;
+                }
+            }
+            if ($duplicate) {
+                $_SESSION['displayMessage'][] = InfoMessage::documentsDuplicate($fileName);
+            } else if ($collection->addReceivedDocumentToCollection($receivedDocument)) {  
+                $_SESSION['displayMessage'][] = InfoMessage::documentsAdded();
+            } else {
+                $_SESSION['displayMessage'][] = InfoMessage::documentsNotAdded();
+            }
         }
+    }
+    
+    // close received message
+    
+    else if (isset($_POST['closeReceivedMessage'])) {
+        header('Location: viewAllReceivedMessages.php');
+    }
+    
+    // close sent message
+    
+    else if (isset($_POST['closeSentMessage'])) {
+        header('Location: viewAllSentMessages.php');
     }
     
     // delete documents
@@ -131,8 +162,8 @@
 
         $error = false;
         
-        foreach ($_POST['document'] as $item) {
-            $document = $collection->getDocumentByIndex($item);
+        foreach ($_POST['document'] as $docID) {
+            $document = $collection->getDocumentByID($docID);
             if (!$collection->deleteDocument($document)) {
                 $error = true;
             }
@@ -151,25 +182,72 @@
     else if (isset($_POST['updateDoc'])) {
         
         $error = false;
-
-        foreach ($_POST['docType'] as $key => $docType) {
-            $document = $collection->getDocumentByIndex($key);
-            $newDocType = $docType;
-            $newDocTitle = $_POST['docTitle'][$key];
-            if ($document['title'] != $newDocTitle || $document['type'] != $newDocType || $newDocType != '' || $newDocTitle != '') {
-                if (!$collection->updateDocument($document, $newDocType, $newDocTitle)) {
+        $updateCount = 0;
+        
+        foreach ($_SESSION['collection'] as $key => $document) {
+            $newType = $_POST['docType'][$key];
+            $newTitle = $_POST['docTitle'][$key];
+            
+            if ($document['type'] != $newType || $document['title'] != $newTitle) {
+                if (!$collection->updateDocument($document, $newType, $newTitle)) {
                     $error = true;
-                };
-            } else {
-                $error = true;
+                } else {
+                    $updateCount++;
+                }
             }
         }
         
         if ($error) {
             $_SESSION['displayMessage'] = InfoMessage::documentsNotUpdated();
-        } else {
+        } else if ($updateCount > 0) {
             $_SESSION['displayMessage'] = InfoMessage::documentsUpdated();
-        }
+        } 
+    }
+    
+    // download document 
+    
+    else if (isset($_POST['downloadDocument'])) {
+        
+        $documentID = key($_POST['downloadDocument']);
+        $document = $collection->getDocumentByID($documentID);
+        $type = $document['type'];
+        $extension = strtolower($document['extension']);
+        $title = $document['title'];
+        $file = "$rootDirectory/uploadedFiles/$appUser/$type/$title.$extension";
+        
+        downloadFile($file);
+    }
+    
+    // download received document
+    
+    else if (isset($_POST['downloadReceivedDocument'])) {
+        
+        $receivedDocumentID = key($_POST['downloadReceivedDocument']);
+        $receivedDocument = $collection->getReceivedDocumentByID($receivedDocumentID);
+        $type = $receivedDocument['type'];
+        $extension = strtolower($receivedDocument['extension']);
+        $title = $receivedDocument['title'];
+        $receivedFrom = $receivedDocument['receivedFrom'];
+        $receivedDate = str_replace('-', '', str_replace(' ', '', str_replace(':', '', $receivedDocument['receivedDate'])));
+        $file = "$rootDirectory/uploadedFiles/$receivedFrom/sharedFiles/$receivedDate/$title.$extension";
+        
+        downloadFile($file);
+    }
+    
+    // download shared document
+    
+    else if (isset($_POST['downloadSharedDocument'])) {
+        
+        $sharedDocumentID = key($_POST['downloadSharedDocument']);
+        $sharedDocument = $collection->getSharedDocumentByID($sharedDocumentID);
+        $type = $sharedDocument['type'];
+        $extension = strtolower($sharedDocument['extension']);
+        $title = $sharedDocument['title'];
+        $sharedWith = $sharedDocument['sharedWith'];
+        $sharedDate = str_replace('-', '', str_replace(' ', '', str_replace(':', '', $sharedDocument['sharedDate'])));
+        $file = "$rootDirectory/uploadedFiles/$appUser/sharedFiles/$sharedDate/$title.$extension";
+        
+        downloadFile($file);
     }
     
     // search results
@@ -177,7 +255,7 @@
     else if (isset($_POST['searchValue']) && $_POST['searchValue'] != '') {
         $searchValue = strtolower(sanitizeString($_POST['searchValue']));
         $collection->searchCollection($searchValue);
-        $_SESSION['searchValue'] = InfoMessage::searchValue($_POST['searchValue']);
+        $_SESSION['searchValue'][] = InfoMessage::searchValue($_POST['searchValue']);
     } 
     
     // clear search results
@@ -261,7 +339,9 @@
     // add file upload
     
     else if ($_POST['addFileUpload']) {
-        $_SESSION['fileUploadCount']++;
+        if ($_SESSION['fileUploadCount'] <= 10) {
+            $_SESSION['fileUploadCount']++;
+        }
     }
     
     // upload documents 
@@ -354,31 +434,40 @@
             $_SESSION['displayMessage'][] = InfoMessage::fileNoFilesSelected();
         } else if (!$error) {
             $_SESSION['displayMessage'][] = InfoMessage::fileUploadSuccessful();
+            header('Refresh: 0; URL=index.php');
         } 
     } 
     
     // cancel upload documents
     
     else if ($_POST['cancelUploadDocs']) {
+        $_SESSION['fileUploadCount'] = 1;
         header('Location: index.php');
     }
     
-    // view message
+    // view received message
     
-    else if (isset($_POST['viewMessage'])) {
-        $_SESSION['messageID'] = key($_POST['viewMessage']);
+    else if (isset($_POST['viewReceivedMessage'])) {
+        $_SESSION['messageID'] = key($_POST['viewReceivedMessage']);
         $messages->readMessage($_SESSION['messageID']);
-        header("Location: viewMessage.php");
+        header("Location: viewReceivedMessage.php");
     }
     
-    // delete messages
+    // view sent message
     
-    else if (isset($_POST['deleteMessages']) && isset($_POST['messages'])) {
+    else if (isset($_POST['viewSentMessage'])) {
+        $_SESSION['messageID'] = key($_POST['viewSentMessage']);
+        header("Location: viewSentMessage.php");
+    }
+    
+    // delete read messages
+    
+    else if (isset($_POST['deleteReceivedMessages']) && isset($_POST['messages'])) {
         
         $error = false;
         
         foreach ($_POST['messages'] as $item) {
-            if (!$messages->deleteMessage($item)) {
+            if (!$messages->deleteReceivedMessage($item)) {
                 $error = true;
             }
         }
@@ -390,6 +479,24 @@
         }
     }
     
+    // delete sent messages
+    
+    else if (isset($_POST['deleteSentMessages']) && isset($_POST['messages'])) {
+        
+        $error = false;
+        
+        foreach ($_POST['messages'] as $item) {
+            if (!$messages->deleteSentMessage($item)) {
+                $error = true;
+            }
+        }
+        
+        if ($error) {
+            $_SESSION['displayMessage'] = InfoMessage::messagesNotDeleted();
+        } else {
+            $_SESSION['displayMessage'] = InfoMessage::messagesDeleted();
+        }
+    }
     
     // get documents
     
@@ -426,7 +533,7 @@
                                     <td></td>
                                     <td></td>
                                     <td align='right'><a href='index.php'><img src='Media/home.png' style='width:35px;height:35px;'></a>
-                                                        <a href='viewAllMessages.php'><img src='Media/mail.png' style='width:35px;height:35px;'></a>
+                                                        <a href='viewAllReceivedMessages.php'><img src='Media/mail.png' style='width:35px;height:35px;'></a>
                                                         <a href='manageProfile.php'><img src='Media/settings.png' style='width:35px;height:35px;'></a>
                                     </td>
                                 </tr>

@@ -29,8 +29,18 @@
         echo $_SESSION['displayMessage'];
         echo "<br><br>";
     } else if (isset($_SESSION['searchValue'])) {
-        echo $_SESSION['searchValue'];
-        echo "<br><br>";
+        echo "<div>Search Value(s): ";
+        $i = 1; 
+        foreach ($_SESSION['searchValue'] as $searchValue) {
+            if (count($_SESSION['searchValue']) > 1 && $i != count($_SESSION['searchValue'])) {
+                echo $searchValue . ", ";
+            } else {
+                echo $searchValue;
+            }
+            
+            $i++;
+        }
+        echo "</div><br><br>";
     }
     
     // show Collection

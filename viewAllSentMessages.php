@@ -12,15 +12,16 @@
     
     // get messages
     
-    $messages->getMessages();
+    $messages->getSentMessages();
     
     // display web page
 
-    echo "<h1>View All Messages</h1>";
+    $messages->showMessageNavigationBar();
+    echo "<h1>Sent Messages</h1>";
     
     // show Messages
 
-    $messages->showAllMessages();
+    $messages->showAllSentMessages();
     
     // check for errors
     

@@ -18,6 +18,10 @@ class InfoMessage {
         return "<div>The username $appUser has already been taken. Please try again.</div>";
     }
     
+    public function attachmentsNoneSelected() {
+        return "<div>No documents selected.</div>";
+    }
+    
     public function dbConnectError() {
         return "<div>Error connecting to database. Please contact the system administrator.<br></div>";
     }
@@ -34,8 +38,20 @@ class InfoMessage {
         return "<div>No records available.</echo>";
     }
     
+    public function documentsAdded() {
+        return "<div>The document(s) you selected have now been added to your collection.</echo>";
+    }
+    
     public function documentsDeleted() {
         return "<div>The document(s) you selected have now been deleted.</echo>";
+    }
+    
+    public function documentsDuplicate($document) {
+        return "<div>$document has already been added to your collection.</echo>";
+    }
+    
+    public function documentsNotAdded() {
+        return "<div>The document(s) you selected could not be added to your collection</div>";
     }
     
     public function documentsNotDeleted() {
@@ -75,7 +91,7 @@ class InfoMessage {
     }
     
     public function fileUploadSuccessful() {
-        return "<div>File upload successful.</div>";
+        return "<div>File upload successful. Redirecting...</div>";
     }
     
     public function invalidEmail() {
@@ -99,15 +115,19 @@ class InfoMessage {
     }
     
     public function messageSent($sentTo) {
-        return "<div>Your message has been sent to $sentTo.</div>";
+        return "<div>Your message has been sent to $sentTo. Redirecting...</div>";
     }
     
     public function messagesDeleted() {
         return "<div>The message(s) you selected have been successfully deleted. </div>";
     }
     
-    public function messagesNo() {
-        return "<div>You have received no messages.</div>";
+    public function messagesNoReceived() {
+        return "<div>You have no received messages.</div>";
+    }
+    
+    public function messagesNoSent() {
+        return "<div>You have not sent any messages.</div>";
     }
     
     public function messagesNotDeleted() {
@@ -151,6 +171,6 @@ class InfoMessage {
     }
     
     public function searchValue($searchValue) {
-        return "<div>Search Value: $searchValue</div>";
+        return "$searchValue";
     }
 }
