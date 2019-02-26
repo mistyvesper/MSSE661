@@ -13,7 +13,6 @@ require_once 'header.php';
 // destroy session
 
 unset($_SESSION['user']);
-$loggedIn = FALSE;
 $appUser = '';
 session_destroy();
 
@@ -23,9 +22,16 @@ echo "<html>
         <head>
             <meta charset='UTF-8'>
             <title>Logged Out</title>
+            <style>
+                @import url('/Stylesheets/main.css');
+            </style>
         </head>
-        <body>
-            <h1>Logged Out</h1>
-            <p>You have been successfully logged out. To log back in, please visit the <a href='loginPage.php'>Login Page</a>.</p>
-        <body>
+        <body class='initial' id='bdyLoggedOut'>
+            <span class='initial' id='spnLoggedOut'>
+                <h1 class='initial' id='hdrLoggedOut'>Logged Out</h1>
+                <p class='initial' id='pLoggedOut'>You have been successfully logged out. 
+                    To log back in, please visit the <a class='link' id='lnkBackToLoginFromLogout' href='loginPage.php'>Login Page</a>.
+                </p>
+            </span>
+        </body>
     </html>";

@@ -12,20 +12,29 @@
     
     // display web page
 
-    echo "<h1>Message Sent</h1>";
+    echo "<span class='documents' id='spnSentMessagesMsg'>
+            <h1 class='documents' id='hdrSentMessagesMsg'>Message Sent</h1>";
     
     // get documents by message id
+    
     $collection->getSentDocumentsByMessage($_SESSION['messageID']);
     $messages->getSentMessageByID($_SESSION['messageID'])->showSentMessage();
     
-    echo "<form  method='post' action='viewSentMessage.php' enctype='multipart/form-data'>";
+    echo "<form class='documents' id='frmSentMessagesMsg' method='post' action='viewSentMessage.php' enctype='multipart/form-data'>";
 
     // show Message
     
     $collection->showSentCollection();
     
-    echo "<br><div><table><tr>";
-    echo "<td><input type='submit' name='closeSentMessage' value='Close Message'></td></tr></table></div></form>";
+    echo "<br><br>
+            <table class='documents' id='tblSentMessagesMsgSubmitButtons'>
+                <tr class='documents' id='trSentMessagesMsgSubmitButtons'>
+                    <td class='form-submit-button-large' id='tdSentMessagesMsg'>
+                        <input class='form-submit-button-large' id='subSentMessagesMsgClose' type='submit' name='closeSentMessage' value='Close Message'>
+                    </td>
+                </tr>
+            </table>
+        </form>";
     
     // show error messages
     
@@ -38,5 +47,4 @@
     
     // end of web page
     
-    echo "</body>
-        </html>";
+    echo "</span></body></html>";

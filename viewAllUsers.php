@@ -3,21 +3,21 @@
 /**
  * Description
  * 
- * Displays messages page.  
+ * Displays users page.  
  * 
  * @author misty
  */
 
     require_once 'header.php'; 
     
-    // get messages
+    // get users
     
-    $messages->getReceivedMessages($appUser);
+    $users->getUsers();
     
     // display web page
 
-    $messages->showMessageNavigationBar();
-    echo "<h1 class='documents' id='hdrReceivedMessages'>Received Messages</h1>";
+    $users->showUserNavigationBar();
+    echo "<h1 class='documents' id='hdrViewAllUsers'>View All Users</h1>";
     
     // check for errors
     
@@ -26,11 +26,12 @@
         echo "<br><br>";
     }
     
-    // show Messages
+    // show users
 
-    $messages->showAllReceivedMessages();
+    $users->showAllUsers();
     
     // end of web page
     
-    echo "</span></body></html>";
+    echo "</body>
+        </html>";
 

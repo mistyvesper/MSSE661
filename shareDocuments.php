@@ -8,43 +8,92 @@
  * @author misty
  */
 
-    require_once 'header.php';    
+    require_once 'header.php';
+    
+    // get friends
+    
+    $users->getFriends();
     
     // display web page
 
-    echo "<h1>Share Documents</h1>";
+    echo "<span class='documents' id='spnShareDocuments'>
+            <h1 class='documents' id='hdrShareDocuments'>Send Message</h1>";
+    
+    // check for errors
     
     if (isset($_SESSION['displayMessage'])) {
         echo $_SESSION['displayMessage'];
     }
     
-    echo "<form  method='post' action='shareDocuments.php' enctype='multipart/form-data'>"
-                    . "<div><h4>Share With</h4>"
-                    . "<input type='text' name='shareWithUser'>"
-                    . "<h4>Subject</h4>"
-                    . "<input type='text' name='subject' style='width:745px'>"
-                    . "<h4>Message</h4>"
-                    . "<input type='text' name='body' style='width:745px;height:75px'></div>"
-                    . "<div><h4>Attachments</h4>"
-                    . "<table>";
+    // display web form
+    
+    echo "<form class='documents' id='frmShareDocuments' method='post' action='shareDocuments.php' enctype='multipart/form-data'>
+            <h4 class='documents' id='hdrShareDocumentsWith'>Share With</h4>
+                <select class='form-text-medium-center' id='selShareDocumentsWith' name='shareWithUser[]' style='width:150px'>";
+    
+    if (isset($_SESSION['sendTo'])) {
+        $sendTo = $_SESSION['sendTo'];
+        foreach ($_SESSION['friends'] AS $friend) {
+            $friendUserName = $friend['userName'];            
+            if ($friend == $sendTo) {
+                echo "<option class='form-text-medium-center' id='optShareDocumentsWith' value='$friendUserName' selected='selected'>$sendTo</option>";
+            } else {
+                echo "<option class='form-text-medium-center' id='optShareDocumentsWith' value='$friendUserName'>$friendUserName</option>";
+            } 
+        }
+    } else {
+        foreach ($_SESSION['friends'] AS $friend) {
+            $friendUserName = $friend['userName'];  
+            if ($friendUserName == $sendTo) {
+                echo "<option class='form-text-medium-center' id='optShareDocumentsWith' value='$friendUserName' selected='selected'>$sendTo</option>";
+            } else {
+                echo "<option class='form-text-medium-center' id='optShareDocumentsWith' value='$friendUserName'>$friendUserName</option>";
+            } 
+        }
+    }
+    
+    echo "</select>";
+
+    echo "<h4 class='documents' id='hdrPendingShareDocumentsSubject'>Subject</h4>
+            <input class='form-text-extralarge-left' id='inPendingShareDocumentsSubject' type='text' name='subject'>
+        <h4 class='documents' id='hdrPendingShareDocumentsMessage'>Message</h4>
+            <input class='form-text-extralarge-tall-left' id='inPendingShareDocumentsMessage' type='text' name='body'>
+        <h4 class='documents' id='hdrPendingShareDocumentsAttach'>Attachments</h4>
+        <table class='documents' id='tblPendingShareDocuments'>
+            <tr class='documents' id='trPendingShareDocumentsHeaders'";
     
     // show Collection
 
     $collection->showPendingSharedCollection();
     
     echo "</table></div>";
-    echo "<div><table><tr>";
+    echo "<table class='documents' id='tblPendingShareDocumentsAddDeleteButtons'>
+            <tr class='documents' id='trPendingShareDocumentsAddDeleteButtons'>";
     
     if (count($_SESSION['pendingSharedCollection']) > 0) {
-        echo "<td style='width:75px'><input type='submit' name='deletePendingSharedDocs' value='Delete' style='width:75px'></td>";
+        echo "<td class='documents' id='tdDeletePendingShareDocuments'>
+                <input class='form-submit-small-center-gray' id='subDeletePendingShareDocuments' type='submit' name='deletePendingSharedDocs' value='Delete'>
+            </td>";
     }
     
-    echo "<td></td><td style='width:75px'><input type='submit' name='addPendingSharedDocs' value='Add' style='width:75px'></td></tr></table></div>"
-        . "<br><br><div><table><tr>"
-        . "<td style='width:75px'><input type='submit' name='cancelShare' value='Cancel' style='width:75px'></td>"
-        . "<td></td><td style='width:75px'><input type='submit' name='send' value='Send' style='width:75px'></td></tr></table></div></form>";    
-
-// end of web page
-    
-    echo "</body>
-        </html>";
+    echo "<td></td>
+            <td class='documents' id='tdAddPendingShareDocuments'>
+                <input class='form-submit-small-center-gray' id='subAddPendingShareDocuments' type='submit' name='addPendingSharedDocs' value='Add'>
+            </td>
+        </tr>
+    </table>
+    <br><br>
+    <table class='documents' id='tblPendingShareDocumentsCancelShareButtons'>
+        <tr class='documents' id='trPendingShareDocumentsCancelShareButtons'>
+            <td class='documents' id='tdPendingShareDocumentsCancel'>
+                <input class='form-submit-button' id='subPendingShareDocumentsCancel' type='submit' name='cancelShare' value='Cancel'>
+            </td>
+            <td></td>
+            <td class='documents' id='tdPendingShareDocumentsSend'>
+                <input class='form-submit-button' id='subPendingShareDocumentsSend' type='submit' name='send' value='Send'>
+            </td>
+        </tr>
+    </table>
+ </form>
+ </body>
+ </html>";    

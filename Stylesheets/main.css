@@ -1,0 +1,383 @@
+/**********************************************************************************************************
+ * INITIAL CLASS (Login, Logout, and Account Registration Pages)
+ **********************************************************************************************************/
+
+body.initial {
+    font-family: "Times";
+    background-image: url("/Media/background.jpg");
+    opacity: 0.85;
+    filter: alpha(opacity=85);
+    background-position: left top; 
+    background-size: cover;
+    text-align: center;
+    vertical-align: middle;
+    margin: 0px;
+}
+
+h1.initial {
+    color: #585858;
+    font-size: 25px;
+}
+
+span.initial {
+    background-color: white;
+    opacity: 0.95;
+    filter: alpha(opacity=95);
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    border-radius: 15px;
+    margin: 0px;
+    padding: 50px 200px 80px 175px;
+}
+
+#spnAccountCreated {
+    display: inline-block;
+    width: 500px;
+    word-wrap: break-word;
+    top: 30%;
+    left: 17%;
+}
+
+#spnLoggedOut {
+    display: inline-block;
+    width: 500px;
+    word-wrap: break-word;
+    top: 30%;
+    left: 17%;
+}
+
+/**********************************************************************************************************
+ * LOGGEDIN CLASS (Top Navigation Bar)
+ **********************************************************************************************************/
+
+h1.loggedInHeader {
+    color: white;
+    font-weight: bold;
+    font-size: 30px;
+    position: absolute;
+    left: 45%;
+    top: 20%;
+}
+
+span.loggedIn {
+    background-image: url("/Media/header.jpg");
+    opacity: 0.85;
+    filter: alpha(opacity=85);
+    background-position: left top;
+    background-size: cover;
+    position: absolute;
+    top: 0%;
+    left: 0%;
+    margin: 0px;
+    height: 150px;
+    padding: 10px;
+    color: white;
+    text-align: center;
+}
+
+table.loggedIn {
+    width: 100%;
+}
+
+tr.loggedInTop {
+    height: 100px;
+    vertical-align: top;
+    color: white;
+}
+
+tr.loggedInBottom {
+    height: 50px;
+}
+
+/**********************************************************************************************************
+ * DOCUMENTS CLASS
+ **********************************************************************************************************/
+
+body.documents {
+    font-family: "Times";
+}
+
+span.documents {
+    position: absolute;
+    top: 25%;
+    left: 12%;
+}
+
+h1.documents {
+    color: #585858;
+}
+
+h3.documents {
+    color: #5a5b60
+}
+
+/**********************************************************************************************************
+ * PARAGRAPHS
+ **********************************************************************************************************/
+
+.p-message {
+    border-color: #e7e7e7;
+    border-style: solid;
+    border-width: 1px;
+    padding: 10px;
+    min-height: 20px;
+}
+
+/**********************************************************************************************************
+ * FORMS
+ **********************************************************************************************************/
+
+.form-label {
+    font-weight: bold;
+}
+
+.form-input {
+    width: 200px;
+    text-decoration: none;
+}
+
+.form-label-small-center {
+    width: 80px;
+    text-align: center;
+}
+
+.form-label-medium-left {
+    width: 150px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.form-label-large-left {
+    width: 350px;
+    text-align: left;
+}
+
+.form-label-medium-center {
+    width: 150px;
+    text-align: center;
+}
+
+.form-text-small-center {
+    width: 80px;
+    text-align: center;
+}
+
+.form-text-medium-center {
+    width: 150px;
+    text-align: center;
+}
+
+.form-text-medium-left {
+    width: 150px;
+    text-align: left;
+}
+
+.form-text-large-left {
+    width: 350px;
+    text-align: left;
+    overflow-wrap: break-word;
+}
+
+.form-text-extralarge-left {
+    width: 745px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.form-text-extralarge-tall-left {
+    width: 745px;
+    height: 100px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.form-text-extraextralarge-left {
+    width: 870px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+}
+
+.form-text-extraextralarge-tall-left {
+    width: 870px;
+    height: 100px;
+    text-align: left;
+    vertical-align: top;
+    overflow-wrap: break-word;
+    font-family: "Times";
+}
+
+.td-rightalign {
+    text-align: right;
+}
+
+/**********************************************************************************************************
+ * BUTTONS
+ **********************************************************************************************************/
+
+.form-submit-button {
+    background-color: #585858;
+    width: 100px;
+    height: 25px;
+    border-color: transparent;
+    color: white;
+}
+
+.form-submit-button-large {
+    background-color: #585858;
+    width: 200px;
+    height: 25px;
+    border-color: transparent;
+    color: white;
+}
+
+.form-submit-small-header-center {
+    width: 80px;
+    height: 25px;
+    text-align: center;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-medium-header-left {
+    width: 150px;
+    text-align: left;
+    text-align: center;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-medium-header-center {
+    width: 150px;
+    height: 25px;
+    text-align: center;
+    background-color: #585858;;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-large-header-left
+{
+    width: 350px;
+    height: 25px;
+    text-align: left;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-extralarge-header-left
+{
+    width: 745px;
+    height: 25px;
+    text-align: left;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-small-center-gray {
+    width: 80px;
+    height: 25px;
+    text-align: center;
+    background-color: #e7e7e7;
+    border: none;
+}
+
+.form-submit-medium-center-gray {
+    width: 125px;
+    height: 25px;
+    text-align: center;
+    background-color: #e7e7e7;
+    border: none;
+}
+
+.form-submit-large-center-gray {
+    width: 150px;
+    height: 25px;
+    text-align: center;
+    background-color: #e7e7e7;
+    border: none;
+}
+
+/**********************************************************************************************************
+ * MESSAGES
+ **********************************************************************************************************/
+
+.errorMessage {
+    background-color: #f4d6ce;
+    display: inline-block;
+    color: red;
+    font-weight: bold;
+    width: 300px;
+    word-wrap: break-word;
+    padding: 5px;
+}
+
+.errorMessage-large {
+    background-color: #f4d6ce;
+    display: inline-block;
+    color: red;
+    font-weight: bold;
+    width: 900px;
+    word-wrap: break-word;
+    padding: 5px;
+}
+
+.searchValues {
+    background-color: #e7e7e7;
+    opacity: .75;
+    filter: alpha(opacity=85);
+    padding: 5px;
+    color: black;
+}
+
+.infoMessage {
+    background-color: #e7e7e7;
+    padding: 5px;
+    color: black;
+}
+
+/**********************************************************************************************************
+ * HYPERLINKS
+ **********************************************************************************************************/
+
+a:link {
+    color: #676e80;
+}
+
+a:visited {
+    color: #b29585;
+}
+
+.link {
+    color: #676e80;
+}
+
+.link-active {
+    color: #5a5b60;
+}
+
+/**********************************************************************************************************
+ * FONTS
+ **********************************************************************************************************/
+
+input {
+    font-family: "Times";
+    font-size: 16px;
+}
+
+select {
+    font-family: "Times";
+    font-size: 16px;
+}

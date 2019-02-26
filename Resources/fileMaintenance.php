@@ -47,11 +47,17 @@ function getFriendlyFileSize($sizeInBytes) {
 
 function createDirectory($directory) {
     
+    // check if directory exists and create as needed
+    
     if (!file_exists($directory)) {
         $old_umask = umask(0);
         mkdir($directory, 0777);
         umask($old_umask);
     }
+    
+    // return status
+    
+    return file_exists($directory);
 }
 
 // function to download file

@@ -14,12 +14,10 @@ class Message {
 
     private $message = [];
     private $db; // database
-    private $con; // Database connection
     
     // constructor to initialize Message properties
     
     public function __construct($msgSubject, $msgBody, $msgTo, $msgFrom, $msgSharedDate, $database) {
-
         $this->message['subject'] = $msgSubject;
         $this->message['body'] = $msgBody;
         $this->message['to'] = $msgTo;
@@ -31,61 +29,61 @@ class Message {
     // function to get subject
     
     public function getMessageSubject() {
-        return $message['subject'];
+        return $this->message['subject'];
     }
     
     // function to set subject
     
     public function setMessageSubject($msgSubject) {
-        $message['subject'] = $msgSubject;
+        $this->message['subject'] = $msgSubject;
     }
     
     // function to get body
     
     public function getMessageBody() {
-        return $message['body'];
+        return $this->message['body'];
     }
     
     // function to set body 
     
     public function setMessageBody($msgBody) {
-        $message['body'] = $msgBody;
+        $this->message['body'] = $msgBody;
     }
     
     // function to get to
     
     public function getMessageTo() {
-        return $message['to'];
+        return $this->message['to'];
     }
     
     // function to set to
     
     public function setMessageTo($msgTo) {
-        $message['to'] = $msgTo;
+        $this->message['to'] = $msgTo;
     }
     
     // function to get from
     
     public function getMessageFrom() {
-        return $message['from'];
+        return $this->message['from'];
     }
     
     // function to set from
     
     public function setMessageFrom($msgFrom) {
-        $message['from'] = $msgFrom;
+        $this->message['from'] = $msgFrom;
     }
     
     // function to get shared date
     
     public function getMessageSharedDate() {
-        return $message['sharedDate'];
+        return $this->message['sharedDate'];
     }
     
     // function to set shared date
     
     public function setMessageSharedDate($msgDate) {
-        $message['sharedDate'] = $msgDate;
+        $this->message['sharedDate'] = $msgDate;
     }
     
     // public to send message
@@ -94,15 +92,15 @@ class Message {
         
         // open database connection
         
-        $this->con = $this->db->getDBConnection();
+        $this->db->getDBConnection();
         
         // check for errors
         
-        if (!$this->con->connect_error ) {
+        if (!$this->db->con->connect_error ) {
             
             // prepare insert statement
             
-            $statement = $this->con->prepare("CALL usp_addMessage(?, ?, ?, ?, ?);");
+            $statement = $this->db->con->prepare("CALL usp_addMessage(?, ?, ?, ?, ?);");
             $statement->bind_param('sssss', $msgSubject, $msgBody, $msgSharedDate, $msgFrom, $msgTo);
             
             // get message properties
@@ -120,16 +118,19 @@ class Message {
             // check for errors
             
             if ($statement->error != '') {
+                $this->db->closeDBConnection();
+                $_SESSION['displayMessage'] = InfoMessage::MessageNotSent();
                 return false;
-            } else {
-                return true;
             }
         } else {
+            $this->db->closeDBConnection();
+            $_SESSION['displayMessage'] = InfoMessage::dbConnectError();
             return false;
         }
         
         // close database connection
         
+        $_SESSION['displayMessage'] = InfoMessage::messageSent($msgTo);
         $this->db->closeDBConnection();
         return true;
     }
@@ -140,7 +141,7 @@ class Message {
         
         // open database connection
         
-        $this->con = $this->db->getDBConnection();
+        $this->db->getDBConnection();
         
         // get message details
         
@@ -152,26 +153,34 @@ class Message {
         
         // check for errors
         
-        if (!$this->con->connect_error ) {
+        if (!$this->db->con->connect_error ) {
             
             // get message ID
         
             $query = "CALL usp_getMessageID('$subject', '$body', '$sharedDate', '$from', '$to');";
-            $result = mysqli_query($this->con, $query);
+            $result = mysqli_query($this->db->con, $query);
             $messageID = mysqli_fetch_array($result, MYSQLI_NUM)[0];
+            
+            // return message ID
             
             if ($messageID) {
                 return $messageID;
             } else {
+                $this->db->closeDBConnection();
+                $_SESSION['displayMessage'] = InfoMessage::dbNoRecords();
                 return false;
             }
         } else {
+            $this->db->closeDBConnection();
+            $_SESSION['displayMessage'] = InfoMessage::dbConnectError();
             return false;
         }
         
         // close result and close database connection
         
-        $result->close();
+        if($result && isset($messageID)) {
+           $result->close(); 
+        }      
         $this->db->closeDBConnection();
     }
     
@@ -195,33 +204,41 @@ class Message {
     
     public function showReceivedMessage() {
         
+        // get message properties
+        
         $sharedBy = $this->message['from'];
         $subject = $this->message['subject'];
         $body = $this->message['body'];
         
-        echo "<div><h4>From</h4>"
-            . "$sharedBy"
-            . "<h4>Subject</h4>"
-            . "$subject"
-            . "<h4>Message</h4>"
-            . "$body"
-            . "<h4>Attachments</h4></div>";
+        // display message
+        
+        echo "<h4 class='documents' id='hdrReceivedMessageFrom'>From</h4>
+                <p class='p-message' id='pReceivedMessageFrom'>$sharedBy</p>
+            <h4 class='documents' id='hdrReceivedMessageSubject'>Subject</h4>
+                <p class='p-message' id='pReceivedMessageSubject'>$subject</p>
+            <h4 class='documents' id='hdrReceivedMessageMessage'>Message</h4>
+                <p class='p-message' id='pReceivedMessageMessage'>$body</h4>
+            <h4 class='documents' id='hdrReceivedMessageAttachments'>Attachments</h4>";
     }
     
     // function to show sent message
     
     public function showSentMessage() {
         
+        // get message properties
+        
         $sharedBy = $this->message['to'];
         $subject = $this->message['subject'];
         $body = $this->message['body'];
         
-        echo "<div><h4>To</h4>"
-            . "$sharedBy"
-            . "<h4>Subject</h4>"
-            . "$subject"
-            . "<h4>Message</h4>"
-            . "$body"
-            . "<h4>Attachments</h4></div>";
+        // show message
+        
+        echo "<h4 class='form-label' id='hdrSentMessagesMsgTo'>To</h4>
+                <p class='p-message' id='pSentMessagesMsgShareBy'>$sharedBy</p>
+            <h4 class='form-label' id='hdrSentMessageMsgSubject'>Subject</h4>
+                <p class='p-message' id='pSentMessagesMsgSubject'>$subject</p>
+            <h4 class='form-label' id='hdrSentMessagesMsgMessage'>Message</h4>
+                <p class='p-message' id='pSentMessagesMsgMessage'>$body</p>
+            <h4 class='form-label' id='hdrSentMessagesMsgAttachments'>Attachments</h4>";
     }
 }

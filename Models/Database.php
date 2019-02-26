@@ -16,7 +16,7 @@ class Database {
     private $user;
     private $password;
     private $database;
-    private $con;
+    public $con;
     
     // constructor
     

@@ -9,89 +9,47 @@
  */
 
     require_once 'header.php';
-
-    // declare and initialize variables
-
-    $email = $_POST['email'];
-    $user = $_POST['user'];
-    $password = $_POST['password'];
-    $submitted = $_POST['submitted'];
-    $database = new Database($dbHost, $dbUser, $dbPassword, $dbDBName);
-    $dbConnection = $database->getDBConnection();
-    
-    // construct email message
-    // https://css-tricks.com/sending-nice-html-email-with-php/
-    
-    $emailTo = $email;
-    $emailSubject = "Account Created";
-    $emailBody = "Hello world.";
-    $emailHeaders = "From: mistyvesper@gmail.com\r\n";
-    $emailHeaders .= "Reply-To: mistyvesper@gmail.com \r\n";
-//    $emailHeaders .= "MIME-Version: 1.0\r\n";
-//    $emailHeaders .= "Content-Type: text/html; charset=ISO-8859-1\r\n";
-//    $emailBody = "<html><body>";
-//    $emailBody .= "<h1>Your Account Has Been Successfully Created</h1>";
-//    $emailBody .= "<p>Thank you for creating an account.";
-//    $emailBody .= "<br><br>&nbsp;Username: $user";
-//    $emailBody .= "<br><br>Please log in to your new account <a href='http://localhost/login.php'>here</a>.";
-//    $emailBody .= "</body></html>";
-    
-    // check for existing account, create account as needed, and login if account creation successful
-    
-    if ($submitted == 1 && $email != '' && $user != '' && $password != '' && !checkForExistingAccount($user, $database) && !checkForExistingEmail($email, $dbConnection)) {
-        if (createAccount($email, $user, $password, $dbConnection)) {
-            mail($emailTo, $emailSubject, $emailMessage, $emailHeaders);
-            createUserDirectory($user, $uploadDirectory);
-            header('Location: accountCreated.php');
-        } else {
-            $accountCreateFailed = 1;
-        }
-    }
-
+ 
     // display web form
     
     echo "<html>
             <head>
                 <meta charset='UTF-8'>
                 <title>Account Registration</title>
+                <style>
+                    @import url('/Stylesheets/main.css');
+                </style>
             </head>
-            <body>
-                <h1>Account Registration</h1>
-                    <div><form method='post' action='registerForAccount.php' enctype='multipart/form-data'>
-                        <table>
+            <body class='initial' id='bdyAccountRegistration'>
+                <span class='initial' id='spnAccountRegistration'>
+                    <h1 class='initial' id='hdrAccountRegistration'>Account Registration</h1>
+                    <form class='initial' id='frmAccountRegistration' method='post' action='registerForAccount.php' enctype='multipart/form-data'>
+                        <table class='initial' id='tblAccountRegistration'>
+                            <tr class='initial' id='trAccountRegisterEmail'>
+                                <td class='form-label' id='tdAccountRegisterEmailLabel'>Email Address:</td>
+                                <td class='form-input' id='tdAccounRegisterEmailInput'><input class='form-input' id='inAccountRegisterEmail' type='text' name='email' maxlength='50'></td>
                             <tr>
-                                <td>Email Address:</td>
-                                <td><input type='text' name='email' maxlength='50'></td>
-                            <tr>
-                            <tr>
-                                <td>User Name:</td>
-                                <td><input type='text' name='user' maxlength='25'></td>
+                            <tr class='initial' id='trAccountRegisterUser'>
+                                <td class='form-label' id='tdAccountRegisterUserLabel'>User Name:</td>
+                                <td class='form-input' id='tdAccountRegisterUserInput'><input class='form-input' id='inAccounRegisterUser' type='text' name='userName' maxlength='25'></td>
                             </tr>
-                            <tr>
-                                <td>Password:</td>
-                                <td><input type='password' name='password' maxlength='25'></td>
+                            <tr class='initial' id='trAccountRegisterPassword'>
+                                <td class='form-label' id='tdAccountRegisterPass'>Password:</td>
+                                <td class='form-input' id='tdAccountRegisterPass'><input class='form-input' id='inAccountRegisterPass' type='password' name='password' maxlength='25'></td>
                             </tr>
                         </table>
-                        <input type='hidden' name='submitted' value='1'>
-                        <br><input type='submit' value='Submit'>
-                    </form></div>
-            </body>
-        </html>";
+                        <br>
+                        <input class='form-submit-button' id='subRegisterForAccount' type='submit' name='registerForAccount' value='Submit'>
+                        <br>
+                        <br>
+                        <a class='link' id='lnkBackToLogin' href='loginPage.php'>Back to Login Page</a>
+                    </form>";
     
-    // check for existing account
+    // check for errors
     
-    if ($submitted == 1 && ($email == '' || $user == '' || $password == '')) {
-        InfoMessage::invalidEntries();
-    } else if ($submitted == 1 && strpos($email, '@') === false) {
-        InfoMessage::invalidEmail();
-    } else if ($accountCreateFailed == 1) {
-        InfoMessage::accountCreationUnsucessful($user);
-    } else if ($submitted == 1 && $email != '' && $user != '' && $password != '' && checkForExistingEmail($email, $dbConnection)) {
-        InfoMessage::emailTaken($email);
-    } else if ($submitted == 1 && $email != '' && $user != '' && $password != '' && checkForExistingAccount($user, $database)) {
-        InfoMessage::accountTaken($user);
-    }  
+    if (isset($_SESSION['displayMessage'])) {
+        echo "<br><br>";
+        echo $_SESSION['displayMessage'];
+    }
     
-    // close database connection
-    
-    $database->closeDBConnection();
+    echo "</span></body></html>";

@@ -12,22 +12,23 @@
     
     // get messages
     
-    $messages->getSentMessages();
+    $messages->getSentMessages($appUser);
     
     // display web page
 
     $messages->showMessageNavigationBar();
-    echo "<h1>Sent Messages</h1>";
-    
-    // show Messages
-
-    $messages->showAllSentMessages();
+    echo "<h1 class='documents' id='hdrSentMessages'>Sent Messages</h1>";
     
     // check for errors
     
     if (isset($_SESSION['displayMessage'])) {
         echo $_SESSION['displayMessage'];
+        echo "<br><br>";
     }
+    
+    // show Messages
+
+    $messages->showAllSentMessages();
     
     // end of web page
     
