@@ -26,7 +26,7 @@
     
         if (isset($_SESSION['displayMessage'])) {
             echo $_SESSION['displayMessage'];
-            echo "<br>";
+            echo "<br><br>";
         }
         
         // show public collections

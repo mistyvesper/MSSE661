@@ -176,7 +176,7 @@ class Messages {
                 $subject = $row['messageSubject'];
                 $body = $row['messageBody'];
                 $sharedDate = $row['sharedDate'];
-                $sharedBy = $row['sharedBy'];
+                $sharedWith= $row['sharedWith'];
             }
         } else {
             $this->db->closeDBConnection();
@@ -193,7 +193,7 @@ class Messages {
         
         // return message
         
-        $this->message = new Message($subject, $body, $sharedBy, $this->messagesUser, $sharedDate, $this->db);
+        $this->message = new Message($subject, $body, $sharedWith, $this->messagesUser, $sharedDate, $this->db);
         if (isset($this->message)) {
             return $this->message;
         } else {
@@ -592,7 +592,7 @@ class Messages {
                 $messageID = $message['messageID'];
                 $readFlag = $message['readFlag'];
                 $subject = $message['messageSubject'];
-                $from = $message['sharedBy'];
+                $to = $message['sharedWith'];
                 $sharedDate = $message['sharedDate'];
                 $attachments = $message['attachmentCount'];
                 $url = "viewSentMessage.php?messageID=". $messageID;
@@ -603,7 +603,7 @@ class Messages {
                         </td>
                         <td class='form-text-small-center' id='tdSentMessagesRead'>$readFlag</td>
                         <td class='form-text-large-left' id='tdSentMessagesSubject'>$subject</td>
-                        <td class='form-text-small-center' id='tdSentMessagesFrom'>$from</td>
+                        <td class='form-text-small-center' id='tdSentMessagesTo'>$to</td>
                         <td class='form-text-medium-center' id='tdSentMessagesShareDate'>$sharedDate</td>
                         <td class='form-text-small-center' id='tdSentMessagesAttachments'>$attachments</td>
                         <td class='form-text-small-center' id='tdSentMessagesView'>

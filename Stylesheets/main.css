@@ -488,8 +488,8 @@ table.dataTable thead tr {
     display: inline-block;
     color: red;
     font-weight: bold;
-    width: 300px;
-    word-wrap: break-word;
+    width: 275px;
+    overflow-wrap: break-word;
     padding: 10px;
 }
 

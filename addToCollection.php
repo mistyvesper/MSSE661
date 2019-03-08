@@ -88,7 +88,13 @@
         </table>
     </form>
 </span>";
-    }    
+    }
+
+// display messages
+
+    if (isset($_SESSION['displayMessage'])) {
+        echo $_SESSION['displayMessage'];
+    }
 
 // end of web page
     

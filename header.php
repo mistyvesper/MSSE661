@@ -173,6 +173,7 @@
     
     if (isset($_POST['upload'])) {
         $_SESSION['fileUploadCount'] = 1;
+        unset($_SESSION['displayMessages']);
         header('Location: uploadDocument.php');
     }
     
@@ -189,8 +190,13 @@
     // send shared documents
     
     if (isset($_POST['send'])) {
+        
         $collection->sendSharedDocuments();
-        header('Refresh: 0; URL=index.php');
+        
+        if (isset($_POST['shareWithUser']) && $_POST['shareWithUser'] != '') {
+            header('Refresh: 0; URL=index.php');
+        }
+        
     }
     
     // delete pending shared documents

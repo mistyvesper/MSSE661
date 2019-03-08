@@ -131,11 +131,11 @@ class InfoMessage {
     }
     
     public function invalidEmail() {
-        return "<span class='errorMessage-large' id='spnInvalidEmail'>ERROR: Please provide a valid email address.</span>";
+        return "<span class='errorMessage' id='spnInvalidEmail'>ERROR: Please provide a valid email address.</span>";
     }
     
     public function invalidEntries() {
-        return "<span class='errorMessage-large' id='spnInvalidEntries'>ERROR: Please provide valid entries for each field.</span>";
+        return "<span class='errorMessage' id='spnInvalidEntries'>ERROR: Please provide valid entries for each field.</span>";
     }
     
     public function invalidPassword() {
@@ -231,7 +231,7 @@ class InfoMessage {
     }
     
     public function publicCollectionNoneAvailable() {
-        return "<span class='recordsMessage' id='spnPublicCollectNone'>No collections available. Please visit the <a href='managePublicCollections'>View/Manage Public Collections</a> page to create a collection.</span>";
+        return "<span class='recordsMessage' id='spnPublicCollectNone'>No collections available. Please visit the <a href='managePublicCollections.php'>View/Manage Public Collections</a> page to create a collection.</span>";
     }
     
     public function publicCollectionDuplicateDocument($documentTitle) {

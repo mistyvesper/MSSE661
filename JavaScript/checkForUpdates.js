@@ -11,6 +11,11 @@ $('document').ready(function() {
     $('#subViewAllFriendsDelete').attr({disabled: true});
     $('#subReceivedMessagesDelete').attr({disabled: true});
     $('#subSentMessagesDelete').attr({disabled: true});
+    if ($('#selShareDocumentsWith').val() === '') {
+        $('#subPendingShareDocumentsSend').attr({disabled: true});
+    } else {
+        $('#subPendingShareDocumentsSend').attr({disabled: false});
+    }
     
     // add event listeners to elements
     
@@ -19,6 +24,8 @@ $('document').ready(function() {
     $('.inMyDocumentsTitle').mouseover(checkForTitleBlanks);
     $('.checkbox').change(checkForSelections);
     $('#subMyDocumentsUpdate').mouseover(checkForTitleBlanks);
+    $('#selShareDocumentsWith').blur(checkForBlankRecipient);
+    $('#subPendingShareDocumentsSend').mouseover(checkForBlankRecipient);
     
     // function to check for updates to document type
     
@@ -141,6 +148,16 @@ $('document').ready(function() {
             $('#subSentMessagesDelete').attr({disabled: false});
         } else {
             $('#subSentMessagesDelete').attr({disabled: true});
+        }
+    }
+    
+    // function to check for blank message recipients 
+    
+    function checkForBlankRecipient() {
+        if ($('#selShareDocumentsWith').val() === '') {
+            $('#subPendingShareDocumentsSend').attr({disabled: true});
+        } else {
+            $('#subPendingShareDocumentsSend').attr({disabled: false});
         }
     }
     

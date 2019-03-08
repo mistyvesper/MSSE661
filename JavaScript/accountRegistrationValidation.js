@@ -18,9 +18,9 @@ $('document').ready(function() {
     
     // disable fields to start out with
     
-    $('#subRegisterForAccount').attr({disabled: true});
-    $('#inAccountRegisterUser').attr({disabled: true});
-    $('#inAccountRegisterPass').attr({disabled: true});
+//    $('#subRegisterForAccount').attr({disabled: true});
+//    $('#inAccountRegisterUser').attr({disabled: true});
+//    $('#inAccountRegisterPass').attr({disabled: true});
     
     // add blur event listeners
 
@@ -50,19 +50,19 @@ $('document').ready(function() {
             $('#tdAccountRegisterEmailTextResults').text('Email Cannot Be Blank');
             $('#tdAccountRegisterEmailTextResults').attr({class: 'red-text'});
             $('#imgAccountRegisterEmailResults').attr({class: 'form-results'});
-            $('#inAccountRegisterUser').attr({disabled: true});
-            $('#inAccountRegisterPass').attr({disabled: true});
-            $('#inAccountRegisterEmail').focus();
-            $('#inAccountRegisterEmail').select();
+//            $('#inAccountRegisterUser').attr({disabled: true});
+//            $('#inAccountRegisterPass').attr({disabled: true});
+//            $('#inAccountRegisterEmail').focus();
+//            $('#inAccountRegisterEmail').select();
         } else if (!emailRegEx.test(userEmail)) {
             $('#imgAccountRegisterEmailResults').attr({src: directory + '/Media/x.png'});
             $('#tdAccountRegisterEmailTextResults').text('Invalid Email Address');
             $('#tdAccountRegisterEmailTextResults').attr({class: 'red-text'});
             $('#imgAccountRegisterEmailResults').attr({class: 'form-results'});
-            $('#inAccountRegisterUser').attr({disabled: true});
-            $('#inAccountRegisterPass').attr({disabled: true});
-            $('#inAccountRegisterEmail').focus();
-            $('#inAccountRegisterEmail').select();
+//            $('#inAccountRegisterUser').attr({disabled: true});
+//            $('#inAccountRegisterPass').attr({disabled: true});
+//            $('#inAccountRegisterEmail').focus();
+//            $('#inAccountRegisterEmail').select();
         } else {
             $.ajax({
                 async: false,
@@ -75,16 +75,16 @@ $('document').ready(function() {
                         $('#imgAccountRegisterEmailResults').attr({src: directory + '/Media/x.png'});
                         $('#tdAccountRegisterEmailTextResults').text('Email Taken');
                         $('#tdAccountRegisterEmailTextResults').attr({class: 'red-text'});
-                        $('#inAccountRegisterUser').attr({disabled: true});
-                        $('#inAccountRegisterPass').attr({disabled: true});
-                        $('#inAccountRegisterEmail').focus();
-                        $('#inAccountRegisterEmail').select();
+//                        $('#inAccountRegisterUser').attr({disabled: true});
+//                        $('#inAccountRegisterPass').attr({disabled: true});
+//                        $('#inAccountRegisterEmail').focus();
+//                        $('#inAccountRegisterEmail').select();
                     } else {
                         $('#imgAccountRegisterEmailResults').attr({src: directory + '/Media/checkmark.png'});
                         $('#tdAccountRegisterEmailTextResults').text('Email Available');
                         $('#tdAccountRegisterEmailTextResults').attr({class: 'green-text'});
-                        $('#inAccountRegisterUser').attr({disabled: false});
-                        $('#inAccountRegisterUser').focus();
+//                        $('#inAccountRegisterUser').attr({disabled: false});
+//                        $('#inAccountRegisterUser').focus();
                     }
 
                     $('#imgAccountRegisterEmailResults').attr({class: 'form-results'});
@@ -107,17 +107,17 @@ $('document').ready(function() {
             $('#tdAccountRegisterUserTextResults').text('User Name Cannot Be Blank');
             $('#tdAccountRegisterUserTextResults').attr({class: 'red-text'});
             $('#imgAccountRegisterUserResults').attr({class: 'form-results'});
-            $('#inAccountRegisterPass').attr({disabled: true});
-            $('#inAccountRegisterUser').focus();
-            $('#inAccountRegisterUser').select();
+//            $('#inAccountRegisterPass').attr({disabled: true});
+//            $('#inAccountRegisterUser').focus();
+//            $('#inAccountRegisterUser').select();
         } else if (!userRegEx.test(user)) {
             $('#imgAccountRegisterUserResults').attr({src: directory + '/Media/x.png'});
             $('#tdAccountRegisterUserTextResults').text('User Name Invalid');
             $('#tdAccountRegisterUserTextResults').attr({class: 'red-text'});
             $('#imgAccountRegisterUserResults').attr({class: 'form-results'});
-            $('#inAccountRegisterPass').attr({disabled: true});
-            $('#inAccountRegisterUser').focus();
-            $('#inAccountRegisterUser').select();
+//            $('#inAccountRegisterPass').attr({disabled: true});
+//            $('#inAccountRegisterUser').focus();
+//            $('#inAccountRegisterUser').select();
         } else {
             $.ajax({
             async: false,
@@ -130,15 +130,15 @@ $('document').ready(function() {
                     $('#imgAccountRegisterUserResults').attr({src: directory + '/Media/x.png'});
                     $('#tdAccountRegisterUserTextResults').text('User Name Taken');
                     $('#tdAccountRegisterUserTextResults').attr({class: 'red-text'});
-                    $('#inAccountRegisterPass').attr({disabled: true});
-                    $('#inAccountRegisterUser').focus();
-                    $('#inAccountRegisterUser').select();
+//                    $('#inAccountRegisterPass').attr({disabled: true});
+//                    $('#inAccountRegisterUser').focus();
+//                    $('#inAccountRegisterUser').select();
                 } else {
                     $('#imgAccountRegisterUserResults').attr({src: directory + '/Media/checkmark.png'});
                     $('#tdAccountRegisterUserTextResults').text('User Name Available');
                     $('#tdAccountRegisterUserTextResults').attr({class: 'green-text'});
-                    $('#inAccountRegisterPass').attr({disabled: false});
-                    $('#inAccountRegisterPass').focus();
+//                    $('#inAccountRegisterPass').attr({disabled: false});
+//                    $('#inAccountRegisterPass').focus();
                 }
                 
                 $('#imgAccountRegisterUserResults').attr({class: 'form-results'});
@@ -158,25 +158,25 @@ $('document').ready(function() {
             $('#tdAccountRegisterPassTextResults').text('Password Cannot Be Blank');
             $('#tdAccountRegisterPassTextResults').attr({class: 'red-text'});
             $('#imgAccountRegisterPassResults').attr({class: 'form-results'});
-            $('#subRegisterForAccount').attr({disabled: true});
-            $('#inAccountRegisterPass').focus();
-            $('#inAccountRegisterPass').select();
+//            $('#subRegisterForAccount').attr({disabled: true});
+//            $('#inAccountRegisterPass').focus();
+//            $('#inAccountRegisterPass').select();
         } else if (!passRegEx.test(pass)) {
             $('#imgAccountRegisterPassResults').attr({src: directory + '/Media/x.png'});
             $('#tdAccountRegisterPassTextResults').text('Password Invalid');
             $('#tdAccountRegisterPassTextResults').attr({class: 'red-text'});
             $('#imgAccountRegisterPassResults').attr({class: 'form-results'});
-            $('#subRegisterForAccount').attr({disabled: true});
-            $('#inAccountRegisterPass').focus();
-            $('#inAccountRegisterPass').select();
+//            $('#subRegisterForAccount').attr({disabled: true});
+//            $('#inAccountRegisterPass').focus();
+//            $('#inAccountRegisterPass').select();
         } else {
             $('#imgAccountRegisterPassResults').attr({src: directory + '/Media/checkmark.png'});
             $('#tdAccountRegisterPassTextResults').text('Valid Password');
             $('#tdAccountRegisterPassTextResults').attr({class: 'green-text'});
             $('#imgAccountRegisterPassResults').attr({class: 'form-results'});
-            $('#subRegisterForAccount').attr({disabled: false});
-            $('#subRegisterForAccount').focus();
-            $('#subRegisterForAccount').select();
+//            $('#subRegisterForAccount').attr({disabled: false});
+//            $('#subRegisterForAccount').focus();
+//            $('#subRegisterForAccount').select();
         }
     }
     

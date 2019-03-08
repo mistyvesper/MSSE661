@@ -25,10 +25,12 @@
                         top: 25%;
                         left: 17%;
                         padding: 110px 0px 70px 225px;
-                        text-overflow: ellipsis;
                         width: 575px;
-                        white-space: nowrap;
-                        overflow: hidden;
+                    }
+                    span.errorMessage {
+                        position: absolute;
+                        top: 75%;
+                        left: 30%;
                     }
                     .hidden {
                         display: none;

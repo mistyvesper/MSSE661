@@ -227,14 +227,14 @@ class Message {
         
         // get message properties
         
-        $sharedBy = $this->message['to'];
+        $sharedWith = $this->message['to'];
         $subject = $this->message['subject'];
         $body = $this->message['body'];
         
         // show message
         
         echo "<h4 class='form-label' id='hdrSentMessagesMsgTo'>To</h4>
-                <p class='p-message' id='pSentMessagesMsgShareBy'>$sharedBy</p>
+                <p class='p-message' id='pSentMessagesMsgShareBy'>$sharedWith</p>
             <h4 class='form-label' id='hdrSentMessageMsgSubject'>Subject</h4>
                 <p class='p-message' id='pSentMessagesMsgSubject'>$subject</p>
             <h4 class='form-label' id='hdrSentMessagesMsgMessage'>Message</h4>

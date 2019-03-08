@@ -379,9 +379,9 @@ class Collection
         }
         
         if (!$error && $documentCount == $this->getDocumentCount()) {
-            $_SESSION['displayMessage'][] = InfoMessage::fileNoFilesSelected();
+            $_SESSION['displayMessages'][] = InfoMessage::fileNoFilesSelected();
         } else if (!$error) {
-            $_SESSION['displayMessage'][] = InfoMessage::fileUploadSuccessful();
+            $_SESSION['displayMessages'][] = InfoMessage::fileUploadSuccessful();
             header('Refresh: 0; URL=index.php');
         }
     }
