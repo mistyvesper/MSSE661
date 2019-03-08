@@ -31,7 +31,7 @@ class InfoMessage {
     }
     
     public function dbConnectError() {
-        return "<span class='errorMessage-large' id='spnDBConnectError'>ERROR: Error connecting to database. Please contact the system administrator.</span>";
+        return "<span class='errorMessage' id='spnDBConnectError'>ERROR: Error connecting to database. Please contact the system administrator.</span>";
     }
     
     public function dbNoRecords() {

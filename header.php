@@ -556,7 +556,7 @@
                 <html>
                     <head>
                         <meta charset='UTF-8'>
-                        <title>Nano-site</title>
+                        <title>Nano-docs</title>
                         <style>
                             @import url('/Stylesheets/main.css');
                         </style>
@@ -646,7 +646,7 @@
                     </head>
                     <body class='body-loggedin' id='bdyLoggedIn'>
                         <span class='loggedIn' id='spnLoggedIn'>
-                            <h1 class='loggedInHeader' id='hdrLoggedInHeader'>Nano-site</h1>
+                            <h1 class='loggedInHeader' id='hdrLoggedInHeader'>Nano-docs</h1>
                             <table class='loggedIn' id='tblLoggedIn'>
                                 <tr class='loggedInTop' id='trLoginInfo'>
                                     <td class='loggedInTop' id='tdPersonIcon'><img class='img' id='imgPersonIcon' src='Media/person_icon.png' style='width:35px;height:35px;'></td>

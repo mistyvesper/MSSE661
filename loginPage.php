@@ -15,7 +15,7 @@
     echo "<html>
             <head>
                 <meta charset='UTF-8'>
-                <title>Nano-site Login</title>
+                <title>Nano-docs Login</title>
                 <style>
                     @import url('/Stylesheets/main.css');
                 </style>
@@ -45,7 +45,7 @@
                         <table class='initial' id='tblLoginForm'>
                             <tr class='initial' id='trLoginHeader'>
                                 <td class='initial' id='tdLoginHeader' colspan=2>
-                                    <h1 class='initial' id='hdrLoginPage'>Nano-site Login</h1>
+                                    <h1 class='initial' id='hdrLoginPage'>Nano-docs Login</h1>
                                 </td>
                             </tr>
                             <tr class='initial' id='trLoginUser'>

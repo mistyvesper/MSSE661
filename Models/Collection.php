@@ -722,7 +722,36 @@ class Collection
             
             // create new error message
   
-            echo infoMessage::dbNoRecords();
+//            echo infoMessage::dbNoRecords();
+            
+            echo "<form class='documents' id='frmMyDocuments' method='post' action='index.php' enctype='multipart/form-data'>
+                    <table class='documents compact' id='tblMyDocuments' cellspacing=0>
+                        <thead class='documents' id='theadMyDocumentsHeaders'>
+                            <tr class='documents' id='trMyDocumentsHeaders'>
+                                <th class='form-label-small-center' id='thMyDocumentsSelectHeader'>
+                                    <input class='form-submit-small-header-center' id='subMyDocumentsSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-label-medium-center' id='thMyDocumentsTypeHeader'>
+                                    <input class='form-submit-medium-header-center' id='subMyDocumentsTypeHeader' type='submit' name='sortDoc' value='Type &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-large-left' id='thMyDocumentsTitleHeader'>
+                                    <input class='form-submit-large-header-left' id='subMyDocumentsTitleHeader' type='submit' name='sortDoc' value='Title &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-small-center' id='thMyDocumentsExtensionHeader' align='center'>
+                                    <input class='form-submit-small-header-center' id='subMyDocumentsExtensionHeader' type='submit' name='sortDoc' value='Ext &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-small-center' id='thMyDocumentsFileSizeHeader' align='center'>
+                                    <input class='form-submit-small-header-center' id='subMyDocumentsFileSizeHeader' type='submit' name='sortDoc' value='Size &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-medium-center' id='thMyDocumentsUploadDateHeader' align='center'>
+                                    <input class='form-submit-medium-header-center' id='subMyDocumentsUploadDateHeader' type='submit' name='sortDoc' value='Upload Date &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-small-center' id='thMyDocumentsDownloadHeader' align='center'>
+                                    <input class='form-submit-small-header-center' type='submit' name='download' value='Download' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>";
             
         } else {
             
@@ -1220,7 +1249,35 @@ class Collection
             
             // create new error message
   
-            echo infoMessage::dbNoRecords();
+//            echo infoMessage::dbNoRecords();
+            
+            echo "<table class='documents' id='tblReceivedDocumentsMsg'>
+                    <thead class='documents' id='theadReceivedDocumentsMsg'>
+                        <tr class='documents' id='trReceivedDocumentsMsgHeaders'>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgSelectHeader'>
+                                <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgSelectHeader' type='submit' name='select' value='Select' disabled>
+                            </th>
+                            <th class='form-submit-medium-header-center' id='thReceivedDocumentsMsgTypeHeader'>
+                                <input class='form-submit-medium-header-center' id='subReceivedDocumentsMsgTypeHeader' type='submit' name='type' value='Type' disabled>
+                            </th>
+                            <th class='form-submit-large-header-left' id='thReceivedDocumentsMsgTitleHeader'>
+                                <input class='form-submit-large-header-left' id='subReceivedDocumentsMsgTitleHeader' type='submit' name='title' value='Title' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgExtensionHeader'>
+                                <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgExtensionHeader' type='submit' name='extension' value='Extension' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgSizeHeader'>
+                                <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgSizeHeader' type='submit' name='size' value='File Size' disabled>
+                            </th>
+                            <th class='form-submit-medium-header-center' id='thReceivedDocumentsMsgShareDateHeader'>
+                                <input class='form-submit-small-header-center' id='thReceivedDocumentsMsgShareDateHeader' type='submit' name='sharedDate' value='Shared Date' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgDownloadHeader'>
+                                <input class='form-submit-small-header-center' id=subReceivedDocumentsMsgDownloadHeader' type='submit' name='download' value='Download' disabled>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>";
             
         } else {
         
@@ -1529,7 +1586,27 @@ class Collection
             
             // create new error message
   
-            echo infoMessage::attachmentsNoneSelected();
+//            echo infoMessage::attachmentsNoneSelected();
+            
+            echo "<tr>
+                    <th class='form-label-small-center' id='thPendingShareDocsSelectHeader'>
+                        <input class='form-submit-small-header-center' id='subPendingShareDocsSelectHeader' type='submit' name='select' value='Select' disabled>
+                    </th>
+                    <th class='form-label-medium-center' id='thPendingShareDocsTypeHeader'>
+                        <input class='form-submit-medium-header-center' id='subPendingShareDocsTypeHeader' type='submit' name='type' value='Type' disabled>
+                    </th>
+                    <th class='form-label-large-center' id='thPendingShareDocsTitleHeader'>
+                        <input class='form-submit-large-header-left' id='subPendingShareDocsTitleHeader' type='submit' name='title' value='Title' disabled>
+                    </th>
+                    <th class='form-label-small-center' id='thPendingShareDocsExtensionHeader'>
+                        <input class='form-submit-small-header-center' id='subPendingShareDocsExtensionHeader' type='submit' name='extension' value='Extension' disabled>
+                    </th>
+                    <th class='form-label-small-center' id='thPendingShareDocsSizeHeader'>
+                        <input class='form-submit-small-header-center' id='subPendingShareDocsSizeHeader' type='submit' name='size' value='File Size' disabled>
+                    </th>
+                </tr>
+            </thead>
+        </table>";
             
         } else {
         
@@ -1842,7 +1919,35 @@ class Collection
             
             // create new error message
   
-            echo infoMessage::dbNoRecords();
+//            echo infoMessage::dbNoRecords();
+            
+            echo "<table class='documents' id='tblSentMessagesMsg'>
+                    <thead class='documents' id='theadSentMessagesMsg'>
+                        <tr class='documents' id='trSentMessagesMsgHeaders'>
+                            <th class='form-submit-medium-header-center' id='thSentMessagesMsgTypeHeader'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgTypeHeader' type='submit' name='type' value='Type' disabled>
+                            </th>
+                            <th class='form-submit-large-header-left' id='thSentMessagesMsgTitleHeader'>
+                                <input class='form-submit-large-header-left' id='subSentMessagesMsgTitleHeader' type='submit' name='title' value='Title' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgExtensionHeader'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgExtensionHeader' type='submit' name='extension' value='Extension' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgSizeHeader'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgSizeHeader' type='submit' name='size' value='File Size' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgShareWith'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgShareWith' type='submit' name='sharedWith' value='To' disabled>
+                            </th>
+                            <th class='form-submit-medium-header-center' id='thSentMessagesMsgShareDate'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgShareDate' type='submit' name='sharedDate' value='Shared Date' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgDownload'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgDownload' type='submit' name='download' value='Download' disabled>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>";
             
         } else {
         
@@ -2258,7 +2363,29 @@ class Collection
             
             // create new error message
   
-            echo infoMessage::dbNoRecords();
+//            echo infoMessage::dbNoRecords();
+            
+            echo "<table class='documents' id='tblPendingPublicCollectDocs'>
+                    <thead class='documents' id=theadPendingPublicCollectDocs'>
+                        <tr class='documents' id='trPendingPublicCollectDocsHeaders'>
+                            <th class='form-submit-small-header-center' id='thPendingPublicCollectDocsSelectHeader'>
+                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsSelectHeader' type='submit' name='select' value='Select' style='width:75px' disabled>
+                            </th>
+                            <th class='form-submit-medium-header-center' id='thPendingPubicCollectDocsTypeHeader'>
+                                <input class='form-submit-medium-header-center' id='inPendingPublicCollectDocsTypeHeader' type='submit' name='sortPendingPublicCollectDoc' value='Type' style='width:150px' disabled>
+                            </th>
+                            <th class='form-submit-large-header-left' id='thPendingPublicCollectDocsTitleHeader'>
+                                <input class='form-submit-large-header-left' id='inPendingPublicCollectDocsTitleHeader' type='submit' name='sortPendingPublicCollectDoc' value='Title' style='width:350px' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thPendingPublicCollectDocsExtensionHeader'>
+                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsExtensionHeader' type='submit' name='sortPendingPublicCollectDoc' value='Extension' style='width:75px' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thPendingPublicCollectDocsSize'>
+                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsSizeHeader' type='submit' name='sortPendingPublicCollectDoc' value='File Size' style='width:75px' disabled>
+                            </th>
+                        </tr>
+                    </thead>
+                </table>";
             
         } else {
         
@@ -2736,7 +2863,30 @@ class Collection
             
             // create new error message
   
-            echo infoMessage::dbNoRecords();
+//            echo infoMessage::dbNoRecords();
+            
+            echo "<form class='documents' id='frmShowPublicCollections' method='post' action='managePublicCollections.php' enctype='multipart/form-data'>
+                    <table class='documents compact' id='tblShowPublicCollections'>
+                        <thead class='documents' id='theadShowPublicCollections'>
+                            <tr class='documents' id='trShowPublicCollectionsHeaders'>
+                                <th class='form-submit-medium-header-left' id='thShowPublicCollectionsTitleHeader'>
+                                    <input class='form-submit-medium-header-left' id='subShowPublicCollectionsTitleHeader' type='submit' name='sortPublicCollectionTitle' value='Title' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thShowPublicCollectionsDescriptionHeader'>
+                                    <input class='form-submit-large-header-left' id='subShowPublicCollectionsDescriptionHeader' type='submit' name='sortPublicCollectionDescription' value='Description' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thShowPublicCollectionsOwnerHeader'>
+                                    <input class='form-submit-small-header-center' id='subShowPublicCollectionsOwnerHeader' type='submit' name='sortPublicCollectionOwner' value='Owner' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thShowPublicCollectionsViewHeader'>
+                                    <input class='form-submit-small-header-center' id='subShowPublicCollectionsViewHeader' type='submit' name='viewPublicCollection' value='View' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thShowPublicCollectionsDownloadHeader'>
+                                    <input class='form-submit-small-header-center' id='subShowPublicCollectionsDownloadHeader' type='submit' name='deletePublicCollection' value='Delete' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>";
             
         } else {
         
@@ -2805,7 +2955,36 @@ class Collection
             
             // create new error message
   
-            echo infoMessage::dbNoRecords();
+//            echo infoMessage::dbNoRecords();
+            
+            echo "<form class='documents' id='frmViewPublicCollection' method='post' action='viewPublicCollection.php' enctype='multipart/form-data'>
+                    <table class='documents' id='tblViewPublicCollection'>
+                        <thead class='documents' id='theadViewPublicCollection'>
+                            <tr class='documents' id='trViewPublicCollectionHeaders'>
+                                <th class='form-submit-medium-header-center' id='thViewPublicCollectionTypeHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewPublicCollectionTypeHeader' type='submit' name='sortCollectDoc' value='Type' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thViewPublicCollectionTitleHeader'>
+                                    <input class='form-submit-large-header-left' id='subViewPublicCollectionTitleHeader' type='submit' name='sortCollectDoc' value='Title' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionExtensionHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionExtensionHeader' type='submit' name='sortCollectDoc' value='Extension' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionSizeHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionSizeHeader' type='submit' name='sortCollectDoc' value='File Size' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewPublicCollectionShareDateHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewPublicCollectionShareDateHeader' type='submit' name='sortCollectDoc' value='Share Date' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionDownloadHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionDownloadHeader' type='submit' name='downloadCollectDoc' value='Download' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionDeleteHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionDeleteHeader' type='submit' name='deleteCollectDoc' value='Delete' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>";
             
         } else {
         

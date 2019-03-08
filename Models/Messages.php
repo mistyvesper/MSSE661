@@ -412,7 +412,36 @@ class Messages {
             
             // create new error message
   
-            $_SESSION['displayMessage'] = infoMessage::messagesNoReceived();
+//            $_SESSION['displayMessage'] = infoMessage::messagesNoReceived();
+            
+            echo "<form class='documents' id='formReceivedMessages' method='post' action='viewAllReceivedMessages.php' enctype='multipart/form-data'>
+                    <table class='documents' id='tblReceivedMessages'>
+                        <thead class='documents' id='theadReceivedMessages'>
+                            <tr class='documents' id='trReceivedMessagesHeaders'>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesSelectHeader' disabled>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesReadHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesReadHeader' type='submit' name='sortRead' value='Read' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thReceivedMessagesSubjectHeader'>
+                                    <input class='form-submit-large-header-left' id='subReceivedMessagesSubjectHeader' type='submit' name='sortSubject' value='Subject' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesFromHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesFromHeader' type='submit' name='sortFrom' value='From' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thReceivedMessagesSharedDateHeader'>
+                                    <input class='form-submit-medium-header-center' id='subReceivedMessagesSharedDateHeader' type='submit' name='sortSharedDate' value='Shared Date' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesAttachmentsHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesAttachmentsHeader' type='submit' name='sortAttachments' value='Attach #' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesAttachmentsHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesAttachmentsHeader' type='submit' name='viewReceivedMessage' value='View' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>";
             
         } else {
         
@@ -489,7 +518,36 @@ class Messages {
             
             // create new error message
   
-            $_SESSION['displayMessage'] = infoMessage::messagesNoSent();
+//            $_SESSION['displayMessage'] = infoMessage::messagesNoSent();
+            
+            echo "<form class='documents' id='frmSentMessages' method='post' action='viewAllSentMessages.php' enctype='multipart/form-data'>
+                    <table class='documents' id='tblSentMessages'>
+                        <thead class='documents' id='theadSentMessages'>
+                            <tr class='documents' id='trSentMessagesHeaders'>
+                                <th class='form-submit-small-header-center' id='thSentMessagesSelectHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-submit-small-small-center' id='thSentMessagesReadHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesReadHeader' type='submit' name='submit' value='Read' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thSentMessagesSubjectHeader'>
+                                    <input class='form-submit-large-header-left' id='subSentMessagesSubjectHeader' type='submit' name='sortSubject' value='Subject' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thSentMessagesFromHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesFromHeader' type='submit' name='sortFrom' value='To' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thSentMessagesShareDateHeader'>
+                                    <input class='form-submit-medium-header-center' id='subMessagesShareDateHeader' type='submit' name='sortSharedDate' value='Shared Date' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thSentMessagesAttachmentsHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesAttachmentsHeader' type='submit' name='sortAttachments' value='Attach #' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thSentMessagesViewHeader'>
+                                    <input class='form-submit-small-header-center' id='thSentMessagesViewHeader' type='submit' name='viewSentMessage' value='View' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>";
             
         } else {
         
