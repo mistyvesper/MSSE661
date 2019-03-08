@@ -8,8 +8,10 @@
  * @author misty
  */
 
+$rootDirectory = dirname(dirname(__FILE__));
+
 require_once 'Message.php';
-require_once '/var/www/html/Resources/databaseMaintenance.php';
+require_once($rootDirectory . '/Resources/databaseMaintenance.php');
 
 class Users {
     
