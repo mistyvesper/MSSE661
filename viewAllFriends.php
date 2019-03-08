@@ -32,6 +32,7 @@
     
     // end of web page
     
-    echo "</body>
+    echo "</span>
+        </body>
         </html>";
 

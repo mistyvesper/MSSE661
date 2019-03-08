@@ -5,8 +5,8 @@
 body.initial {
     font-family: "Times";
     background-image: url("/Media/background.jpg");
-    opacity: 0.85;
-    filter: alpha(opacity=85);
+/*    opacity: 0.85;
+    filter: alpha(opacity=85);*/
     background-position: left top; 
     background-size: cover;
     text-align: center;
@@ -29,6 +29,7 @@ span.initial {
     border-radius: 15px;
     margin: 0px;
     padding: 50px 200px 80px 175px;
+    box-shadow: 10px 10px 5px grey;
 }
 
 #spnAccountCreated {
@@ -70,14 +71,15 @@ span.loggedIn {
     top: 0%;
     left: 0%;
     margin: 0px;
-    height: 150px;
-    padding: 10px;
+    width: 100%;
+    height: 170px;
     color: white;
     text-align: center;
 }
 
 table.loggedIn {
     width: 100%;
+    padding: 10px;
 }
 
 tr.loggedInTop {
@@ -101,7 +103,7 @@ body.documents {
 span.documents {
     position: absolute;
     top: 25%;
-    left: 12%;
+    left: 9%;
 }
 
 h1.documents {
@@ -110,6 +112,15 @@ h1.documents {
 
 h3.documents {
     color: #5a5b60
+}
+
+/**********************************************************************************************************
+ * DATA TABLES
+ **********************************************************************************************************/
+
+table.dataTable thead tr {
+    background-color: #585858;
+    padding: 10px 0px 10px 0px;
 }
 
 /**********************************************************************************************************
@@ -176,18 +187,17 @@ h3.documents {
 .form-text-large-left {
     width: 350px;
     text-align: left;
-    overflow-wrap: break-word;
 }
 
 .form-text-extralarge-left {
-    width: 745px;
+    width: 840px;
     text-align: left;
     vertical-align: top;
     overflow-wrap: break-word;
 }
 
 .form-text-extralarge-tall-left {
-    width: 745px;
+    width: 840px;
     height: 100px;
     text-align: left;
     vertical-align: top;
@@ -195,14 +205,14 @@ h3.documents {
 }
 
 .form-text-extraextralarge-left {
-    width: 870px;
+    width: 1050px;
     text-align: left;
     vertical-align: top;
     overflow-wrap: break-word;
 }
 
 .form-text-extraextralarge-tall-left {
-    width: 870px;
+    width: 1050px;
     height: 100px;
     text-align: left;
     vertical-align: top;
@@ -212,6 +222,10 @@ h3.documents {
 
 .td-rightalign {
     text-align: right;
+}
+
+#inSearchValue {
+    width: 250px;
 }
 
 /**********************************************************************************************************
@@ -226,6 +240,27 @@ h3.documents {
     color: white;
 }
 
+.form-submit-button:focus {
+    background-color: #e7e7e7;
+    color: #585858;
+    border-color: #585858;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.form-submit-button:hover {
+    background-color: #e7e7e7;
+    color: #585858;
+    border: none;
+}
+
+.form-submit-button:disabled {
+    background-color: #e2e2e2;
+    font-style: italic;
+    color: #585858;
+    border: none;
+}
+
 .form-submit-button-large {
     background-color: #585858;
     width: 200px;
@@ -234,7 +269,38 @@ h3.documents {
     color: white;
 }
 
+.form-submit-button-large:focus {
+    background-color: #e7e7e7;
+    color: #585858;
+    border-color: #585858;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.form-submit-button-large:hover {
+    background-color: #e7e7e7;
+    color: #585858;
+    border: none;
+}
+
+.form-submit-button-large:disabled {
+    background-color: #e2e2e2;
+    font-style: italic;
+    color: #585858;
+    border: none;
+}
+
 .form-submit-small-header-center {
+    width: 80px;
+    height: 25px;
+    text-align: center;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-small-header-center:focus {
     width: 80px;
     height: 25px;
     text-align: center;
@@ -254,7 +320,27 @@ h3.documents {
     border: none;
 }
 
+.form-submit-medium-header-left:focus {
+    width: 150px;
+    text-align: left;
+    text-align: center;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
 .form-submit-medium-header-center {
+    width: 150px;
+    height: 25px;
+    text-align: center;
+    background-color: #585858;;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-medium-header-center:focus {
     width: 150px;
     height: 25px;
     text-align: center;
@@ -275,8 +361,28 @@ h3.documents {
     border: none;
 }
 
+.form-submit-large-header-left:focus {
+    width: 350px;
+    height: 25px;
+    text-align: left;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
 .form-submit-extralarge-header-left
 {
+    width: 745px;
+    height: 25px;
+    text-align: left;
+    background-color: #585858;
+    color: white;
+    font-weight: bold;
+    border: none;
+}
+
+.form-submit-extralarge-header-left:focus {
     width: 745px;
     height: 25px;
     text-align: left;
@@ -294,6 +400,27 @@ h3.documents {
     border: none;
 }
 
+.form-submit-small-center-gray:focus {
+    background-color: #585858;
+    color: white;
+    border-color: #585858;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.form-submit-small-center-gray:hover {
+    background-color: #585858;
+    color: white;
+    border: none;
+}
+
+.form-submit-small-center-gray:disabled {
+    background-color: #e2e2e2;
+    color: #585858;
+    border: none;
+    font-style: italic;
+}
+
 .form-submit-medium-center-gray {
     width: 125px;
     height: 25px;
@@ -302,12 +429,54 @@ h3.documents {
     border: none;
 }
 
+.form-submit-medium-center-gray:focus {
+    background-color: #585858;
+    color: white;
+    border-color: #585858;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.form-submit-medium-center-gray:hover {
+    background-color: #585858;
+    color: white;
+    border: none;
+}
+
+.form-submit-medium-center-gray:disabled {
+    background-color: #e2e2e2;
+    color: #585858;
+    border: none;
+    font-style: italic;
+}
+
 .form-submit-large-center-gray {
     width: 150px;
     height: 25px;
     text-align: center;
     background-color: #e7e7e7;
     border: none;
+}
+
+.form-submit-large-center-gray:focus {
+    background-color: #585858;
+    color: white;
+    border-color: #585858;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.form-submit-large-center-gray:hover {
+    background-color: #585858;
+    color: white;
+    border: none;
+}
+
+.form-submit-large-center-gray:disabled {
+    background-color: #e2e2e2;
+    color: #585858;
+    border: none;
+    font-style: italic;
 }
 
 /**********************************************************************************************************
@@ -321,7 +490,7 @@ h3.documents {
     font-weight: bold;
     width: 300px;
     word-wrap: break-word;
-    padding: 5px;
+    padding: 10px;
 }
 
 .errorMessage-large {
@@ -331,20 +500,20 @@ h3.documents {
     font-weight: bold;
     width: 900px;
     word-wrap: break-word;
-    padding: 5px;
+    padding: 10px;
 }
 
 .searchValues {
     background-color: #e7e7e7;
     opacity: .75;
     filter: alpha(opacity=85);
-    padding: 5px;
+    padding: 10px;
     color: black;
 }
 
 .infoMessage {
     background-color: #e7e7e7;
-    padding: 5px;
+    padding: 10px;
     color: black;
 }
 
@@ -377,7 +546,66 @@ input {
     font-size: 16px;
 }
 
+input:focus {
+    background-color: whitesmoke;
+    outline: none;
+    border-color: #585858;
+    border-width: 1px;
+}
+
 select {
     font-family: "Times";
     font-size: 16px;
+}
+
+textarea {
+    font-family: "Time";
+    font-size: 16px;
+}
+
+textarea:focus {
+    background-color: whitesmoke;
+    outline: none;
+    border-color: #585858;
+}
+
+/**********************************************************************************************************
+ * TOOLTIPS - https://www.w3schools.com/css/css_tooltip.asp
+ **********************************************************************************************************/
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 120px;
+  background-color: whitesmoke;
+  opacity: 0;
+  color: #585858;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+  position: absolute;
+  top: -5px;
+  right: 105%; 
+  transition: opacity 1s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: .85;
+}
+
+/**********************************************************************************************************
+ * POPUPS - https://www.pair.com/support/kb/how-to-use-jquery-to-generate-modal-pop-up-when-clicked/
+ **********************************************************************************************************/
+
+.popup-overlay {
+visibility:hidden;
+}
+
+.popup-content {
+visibility:hidden;
 }

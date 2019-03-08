@@ -420,29 +420,32 @@ class Messages {
 
             echo "<form class='documents' id='formReceivedMessages' method='post' action='viewAllReceivedMessages.php' enctype='multipart/form-data'>
                     <table class='documents' id='tblReceivedMessages'>
-                        <tr class='documents' id='trReceivedMessagesHeaders'>
-                            <th class='form-submit-small-header-center' id='thReceivedMessagesSelectHeader' disabled>
-                                <input class='form-submit-small-header-center' id='subReceivedMessagesSelectHeader' type='submit' name='select' value='Select'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thReceivedMessagesReadHeader'>
-                                <input class='form-submit-medium-header-center' id='subReceivedMessagesReadHeader' type='submit' name='submit' value='Read/Unread'>
-                            </th>
-                            <th class='form-submit-large-header-left' id='thReceivedMessagesSubjectHeader'>
-                                <input class='form-submit-large-header-left' id='subReceivedMessagesSubjectHeader' type='submit' name='sortSubject' value='Subject'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thReceivedMessagesFromHeader'>
-                                <input class='form-submit-small-header-center' id='subReceivedMessagesFromHeader' type='submit' name='sortFrom' value='From'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thReceivedMessagesSharedDateHeader'>
-                                <input class='form-submit-medium-header-center' id='subReceivedMessagesSharedDateHeader' type='submit' name='sortSharedDate' value='Shared Date'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thReceivedMessagesAttachmentsHeader'>
-                                <input class='form-submit-medium-header-center' id='subReceivedMessagesAttachmentsHeader' type='submit' name='sortAttachments' value='Attachments'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thReceivedMessagesAttachmentsHeader'>
-                                <input class='form-submit-small-header-center' id='subReceivedMessagesAttachmentsHeader' type='submit' name='viewReceivedMessage' value='View' disabled>
-                            </th>
-                        </tr>";
+                        <thead class='documents' id='theadReceivedMessages'>
+                            <tr class='documents' id='trReceivedMessagesHeaders'>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesSelectHeader' disabled>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesReadHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesReadHeader' type='submit' name='sortRead' value='Read' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thReceivedMessagesSubjectHeader'>
+                                    <input class='form-submit-large-header-left' id='subReceivedMessagesSubjectHeader' type='submit' name='sortSubject' value='Subject' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesFromHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesFromHeader' type='submit' name='sortFrom' value='From' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thReceivedMessagesSharedDateHeader'>
+                                    <input class='form-submit-medium-header-center' id='subReceivedMessagesSharedDateHeader' type='submit' name='sortSharedDate' value='Shared Date' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesAttachmentsHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesAttachmentsHeader' type='submit' name='sortAttachments' value='Attach #' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thReceivedMessagesAttachmentsHeader'>
+                                    <input class='form-submit-small-header-center' id='subReceivedMessagesAttachmentsHeader' type='submit' name='viewReceivedMessage' value='View' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class='documents' id='tbodyReceivedMessages'>";
             
             foreach ($this->messages as $key => $message) {
                 
@@ -456,20 +459,20 @@ class Messages {
 
                 echo "<tr class='documents' id='trReceivedMessages'>
                         <td class='form-text-small-center' id='tdReceivedMessagesCheckbox'>
-                            <input class='checkbox' id='chkReceivedMessagesCheckbox' type='checkbox' name='messages[]' value='$messageID'>
+                            <input class='checkbox' id='chkReceivedMessagesCheckbox" . $key . "' type='checkbox' name='messages[]' value='$messageID'>
                         </td>
-                        <td class='form-text-medium-center' id='tdReceivedMessagesRead'>$readFlag</td>
+                        <td class='form-text-small-center' id='tdReceivedMessagesRead'>$readFlag</td>
                         <td class='form-text-large-left' id='tdReceivedMessagesSubject'>$subject</td>
                         <td class='form-text-small-center' id='tdReceivedMessagesFrom'>$from</td>
                         <td class='form-text-medium-center' id='tdReceivedMessagesSharedDate'>$sharedDate</td>
-                        <td class='form-text-medium-center' id='tdReceivedMessagesAttachments'>$attachments</td>
-                        <td class='form-submit-small-center-gray' id='tdReceivedMessagesView'>
+                        <td class='form-text-small-center' id='tdReceivedMessagesAttachments'>$attachments</td>
+                        <td class='form-text-small-center' id='tdReceivedMessagesView'>
                             <input class='form-submit-small-center-gray' id='subReceivedMessagesView' type='submit' name='viewReceivedMessage[$messageID]' value='View'>
                         </td>
                     </tr>";
             }
 
-            echo "</table>
+            echo "</tbody></table>
                     <br>
                     <input class='form-submit-button' id='subReceivedMessagesDelete' type='submit' name='deleteReceivedMessages' value='Delete'>
                 </form>";
@@ -494,29 +497,32 @@ class Messages {
 
             echo "<form class='documents' id='frmSentMessages' method='post' action='viewAllSentMessages.php' enctype='multipart/form-data'>
                     <table class='documents' id='tblSentMessages'>
-                        <tr class='documents' id='trSentMessagesHeaders'>
-                            <th class='form-submit-small-header-center' id='thSentMessagesSelectHeader'>
-                                <input class='form-submit-small-header-center' id='subSentMessagesSelectHeader' type='submit' name='select' value='Select' disabled>
-                            </th>
-                            <th class='form-submit-small-medium-center' id='thSentMessagesReadHeader'>
-                                <input class='form-submit-medium-header-center' id='subSentMessagesReadHeader' type='submit' name='submit' value='Read/Unread'>
-                            </th>
-                            <th class='form-submit-large-header-left' id='thSentMessagesSubjectHeader'>
-                                <input class='form-submit-large-header-left' id='subSentMessagesSubjectHeader' type='submit' name='sortSubject' value='Subject'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thSentMessagesFromHeader'>
-                                <input class='form-submit-small-header-center' id='subSentMessagesFromHeader' type='submit' name='sortFrom' value='To'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thSentMessagesShareDateHeader'>
-                                <input class='form-submit-medium-header-center' id='subMessagesShareDateHeader' type='submit' name='sortSharedDate' value='Shared Date'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thSentMessagesAttachmentsHeader'>
-                                <input class='form-submit-medium-header-center' id='subSentMessagesAttachmentsHeader' type='submit' name='sortAttachments' value='Attachments'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thSentMessagesViewHeader'>
-                                <input class='form-submit-small-header-center' id='thSentMessagesViewHeader' type='submit' name='viewSentMessage' value='View' disabled>
-                            </th>
-                        </tr>";
+                        <thead class='documents' id='theadSentMessages'>
+                            <tr class='documents' id='trSentMessagesHeaders'>
+                                <th class='form-submit-small-header-center' id='thSentMessagesSelectHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-submit-small-small-center' id='thSentMessagesReadHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesReadHeader' type='submit' name='submit' value='Read' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thSentMessagesSubjectHeader'>
+                                    <input class='form-submit-large-header-left' id='subSentMessagesSubjectHeader' type='submit' name='sortSubject' value='Subject' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thSentMessagesFromHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesFromHeader' type='submit' name='sortFrom' value='To' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thSentMessagesShareDateHeader'>
+                                    <input class='form-submit-medium-header-center' id='subMessagesShareDateHeader' type='submit' name='sortSharedDate' value='Shared Date' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thSentMessagesAttachmentsHeader'>
+                                    <input class='form-submit-small-header-center' id='subSentMessagesAttachmentsHeader' type='submit' name='sortAttachments' value='Attach #' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thSentMessagesViewHeader'>
+                                    <input class='form-submit-small-header-center' id='thSentMessagesViewHeader' type='submit' name='viewSentMessage' value='View' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class='documents' id='tbodySentMessages'>";
             
             foreach ($this->sentMessages as $key => $message) {
                 
@@ -530,20 +536,20 @@ class Messages {
 
                 echo "<tr class='documents' id='trSentMessages'>
                         <td class='form-text-small-center' id='tdSentMessagesCheckbox'>
-                            <input class='checkbox' id='chkSentMessagesCheckbox' type='checkbox' name='messages[]' value='$messageID'>
+                            <input class='checkbox' id='chkSentMessagesCheckbox" . $key . "' type='checkbox' name='messages[]' value='$messageID'>
                         </td>
-                        <td class='form-text-medium-center' id='tdSentMessagesRead'>$readFlag</td>
+                        <td class='form-text-small-center' id='tdSentMessagesRead'>$readFlag</td>
                         <td class='form-text-large-left' id='tdSentMessagesSubject'>$subject</td>
                         <td class='form-text-small-center' id='tdSentMessagesFrom'>$from</td>
                         <td class='form-text-medium-center' id='tdSentMessagesShareDate'>$sharedDate</td>
-                        <td class='form-text-medium-center' id='tdSentMessagesAttachments'>$attachments</td>
-                        <td class='form-submit-small-center-gray' id='tdSentMessagesView'>
+                        <td class='form-text-small-center' id='tdSentMessagesAttachments'>$attachments</td>
+                        <td class='form-text-small-center' id='tdSentMessagesView'>
                             <input class='form-submit-small-center-gray' id='subSentMessagesView' type='submit' name='viewSentMessage[$messageID]' value='View'>
                         </td>
                     </tr>";
             }
 
-            echo "</table>
+            echo "</tbody></table>
                     <br>
                     <input class='form-submit-button' id='subSentMessagesDelete' type='submit' name='deleteSentMessages' value='Delete'>
                 </form>";

@@ -57,16 +57,17 @@
     echo "<h4 class='documents' id='hdrPendingShareDocumentsSubject'>Subject</h4>
             <input class='form-text-extralarge-left' id='inPendingShareDocumentsSubject' type='text' name='subject'>
         <h4 class='documents' id='hdrPendingShareDocumentsMessage'>Message</h4>
-            <input class='form-text-extralarge-tall-left' id='inPendingShareDocumentsMessage' type='text' name='body'>
+            <textarea class='form-text-extralarge-tall-left' id='inPendingShareDocumentsMessage' name='body'></textarea>
         <h4 class='documents' id='hdrPendingShareDocumentsAttach'>Attachments</h4>
-        <table class='documents' id='tblPendingShareDocuments'>
-            <tr class='documents' id='trPendingShareDocumentsHeaders'";
+        <table class='documents compact' id='tblPendingShareDocuments'>
+            <thead class='documents' id='theadPendingShareDocumentsHeaders'>
+                <tr class='documents' id='trPendingShareDocumentsHeaders'";
     
     // show Collection
 
     $collection->showPendingSharedCollection();
     
-    echo "</table></div>";
+    echo "</tbody></table></div>";
     echo "<table class='documents' id='tblPendingShareDocumentsAddDeleteButtons'>
             <tr class='documents' id='trPendingShareDocumentsAddDeleteButtons'>";
     

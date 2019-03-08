@@ -405,26 +405,29 @@ class Users {
 
             echo "<form class='documents' id='frmViewAllFriends' method='post' action='viewAllFriends.php' enctype='multipart/form-data'>
                     <table class='documents' id='tblViewAllFriends'>
-                        <tr class='documents' id='trViewAllFriendsHeaders'>
-                            <th class='form-submit-small-header-center' id='thViewAllFriendsSelectHeader'>
-                                <input class='form-submit-small-header-center' id='subViewAllFriendsSelectHeader' type='submit' name='select' value='Select' disabled>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thViewAllFriendsUserNameHeader'>
-                                <input class='form-submit-small-header-center' id='subViewAllFriendsUserNameHeader' type='submit' name='sortUserName' value='User Name'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thViewAllFriendsFirstNameHeader'>
-                                <input class='form-submit-medium-header-center' id='subViewAllFriendsFirstNameHeader' type='submit' name='sortFirstName' value='First Name'>
-                            </th>
-                            <th class='form-submit-small-medium-center' id='thViewAllFriendsLastNameHeader'>
-                                <input class='form-submit-medium-header-center' id='subViewAllFriendsLastNameHeader' type='submit' name='sortLastName' value='Last Name'>
-                            </th>
-                            <th class='form-submit-large-header-left' id='thViewAllFriendsEmailHeader'>
-                                <input class='form-submit-large-header-left' id='subViewAllFriendsEmailHeader' type='submit' name='sortEmail' value='Email'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thViewAllFriendsSendMsgHeader'>
-                                <input class='form-submit-medium-header-center' id='thViewAllFriendsSendMsgHeader' type='submit' name='sendMessage' value='Send Message' disabled>
-                            </th>
-                        </tr>";
+                        <thead class='documents' id='theadViewAllFriends'>
+                            <tr class='documents' id='trViewAllFriendsHeaders'>
+                                <th class='form-submit-small-header-center' id='thViewAllFriendsSelectHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewAllFriendsSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllFriendsUserNameHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewAllFriendsUserNameHeader' type='submit' name='sortUserName' value='User Name' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllFriendsFirstNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllFriendsFirstNameHeader' type='submit' name='sortFirstName' value='First Name' disabled>
+                                </th>
+                                <th class='form-submit-small-medium-center' id='thViewAllFriendsLastNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllFriendsLastNameHeader' type='submit' name='sortLastName' value='Last Name' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thViewAllFriendsEmailHeader'>
+                                    <input class='form-submit-large-header-left' id='subViewAllFriendsEmailHeader' type='submit' name='sortEmail' value='Email' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllFriendsSendMsgHeader'>
+                                    <input class='form-submit-medium-header-center' id='thViewAllFriendsSendMsgHeader' type='submit' name='sendMessage' value='Send Message' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class='documents' id='tbodyViewAllFriends'>";
             
             foreach ($this->friends as $key => $friend) {
                 
@@ -436,19 +439,19 @@ class Users {
 
                 echo "<tr class='documents' id='trViewAllFriends'>
                         <td class='form-text-small-center' id='tdViewAllFriendsSelect'>
-                            <input class='checkbox' id='chkViewAllFriendsSelect' type='checkbox' name='messages[]' value='$userID'>
+                            <input class='checkbox' id='chkViewAllFriendsSelect" . $key . "' type='checkbox' name='messages[]' value='$userID'>
                         </td>
                         <td class='form-text-medium-center' id='tdViewAllFriendsUserName'>$userName</td>
                         <td class='form-text-medium-center' id='tdViewAllFriendsFirstName'>$firstName</td>
                         <td class='form-text-medium-center' id='tdViewAllFriendsLastName'>$lastName</td>
                         <td class='form-text-large-left' id='tdViewAllFriendsEmail'>$email</td>
-                        <td class='form-submit-medium-center-gray' id='tdViewAllFriendsSendMsg'>
+                        <td class='form-text-medium-center' id='tdViewAllFriendsSendMsg'>
                             <input class='form-submit-medium-center-gray' id='subViewAllFriendsSendMsg' type='submit' name='sendMessage[$userID]' value='Send Message'>
                         </td>
                     </tr>";
             }
 
-            echo "</table>";
+            echo "</tbody></table>";
             echo "<br>
                     <input class='form-submit-button' id='subViewAllFriendsDelete' type='submit' name='deleteFriends[$userID]' value='Delete'>
                 </form>";
@@ -473,23 +476,26 @@ class Users {
 
             echo "<form class='documents' id='frmViewAllUsers' method='post' action='viewAllUsers.php' enctype='multipart/form-data'>
                     <table class='documents' id='tblViewAllUsers'>
-                        <tr class='documents' id='trViewAllUsersHeaders'>
-                            <th class='form-submit-medium-header-center' id='thViewAllUsersUserNameHeader'>
-                                <input class='form-submit-medium-header-center' id='subViewAllUsersUserNameHeader' type='submit' name='submit' value='User Name'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thViewAllUsersFirstNameHeader'>
-                                <input class='form-submit-medium-header-center' id='subViewAllUsersFirstNameHeader' type='submit' name='sortUserFirstName' value='First Name'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thViewAllUsersLastNameHeader'>
-                                <input class='form-submit-medium-header-center' id='subViewAllUsersLastNameHeader' type='submit' name='sortUserLastName' value='Last Name'>
-                            </th>
-                            <th class='form-submit-large-header-left' id='thViewAllUsersEmailHeader'>
-                                <input class='form-submit-large-header-left' id='subViewAllUsersEmailHeader' type='submit' name='sortUserEmail' value='Email'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thViewAllUsersSendFriendRequest'>
-                                <input class='form-submit-medium-header-center' id='subViewAllUsersSendFriendRequest' type='submit' name='requestFriend' value='Send Friend Request'>
-                            </th>
-                        </tr>";
+                        <thead class='documents' id='theadViewAllUsers'>
+                            <tr class='documents' id='trViewAllUsersHeaders'>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersUserNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersUserNameHeader' type='submit' name='submit' value='User Name' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersFirstNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersFirstNameHeader' type='submit' name='sortUserFirstName' value='First Name' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersLastNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersLastNameHeader' type='submit' name='sortUserLastName' value='Last Name' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thViewAllUsersEmailHeader'>
+                                    <input class='form-submit-large-header-left' id='subViewAllUsersEmailHeader' type='submit' name='sortUserEmail' value='Email' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersSendFriendRequest'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersSendFriendRequest' type='submit' name='requestFriend' value='Friend Request' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class='documents' id='tbodyViewAllUsers'>";
             
             foreach ($this->users as $key => $user) {
                 
@@ -507,19 +513,19 @@ class Users {
                         <td class='form-text-large-left' id='tdViewAllUsersEmail'>$email</td>";
                 
                 if ($friendStatus) {
-                    echo "<td class='form-submit-medium-center-gray' id='tdViewAllUsersSendFriendRequest'>
+                    echo "<td class='form-text-medium-center' id='tdViewAllUsersSendFriendRequest'>
                             <input class='form-submit-medium-center-gray' id='subViewAllUsersSendFriendRequest' type='submit' name='requestFriend[$userID]' value='Already Friends' disabled>
                         </td>
                     </tr>";
                 } else {
-                    echo "<td class='form-submit-medium-center-gray' id='tdViewAllUsersSendFriendRequest'>
+                    echo "<td class='form-text-medium-center' id='tdViewAllUsersSendFriendRequest'>
                             <input class='form-submit-medium-center-gray' id='subViewAllUsersSendFriendRequest' type='submit' name='requestFriend[$userID]' value='Send Request'>
                         </td>
                     </tr>";
                 }
             }
 
-            echo "</table></div></form>";
+            echo "</tbody></table></div></form>";
         }
     }
 }

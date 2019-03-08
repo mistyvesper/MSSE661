@@ -23,7 +23,7 @@ class InfoMessage {
     }
     
     public function accountNotDeleted($appUser) {
-        return "<span class='errorMessage' id='spnAccountNotDeleted'>ERROR: Your account could not be deleted. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnAccountNotDeleted'>ERROR: Your account could not be deleted. Please try again.</span>";
     }
     
     public function attachmentsNoneSelected() {
@@ -31,7 +31,7 @@ class InfoMessage {
     }
     
     public function dbConnectError() {
-        return "<span class='errorMessage' id='spnDBConnectError'>ERROR: Error connecting to database. Please contact the system administrator.</span>";
+        return "<span class='errorMessage-large' id='spnDBConnectError'>ERROR: Error connecting to database. Please contact the system administrator.</span>";
     }
     
     public function dbNoRecords() {
@@ -51,15 +51,15 @@ class InfoMessage {
     }
     
     public function documentsNotAdded() {
-        return "<span class='errorMessage' id='spnDocsNotAdded'>ERROR: The document(s) you selected could not be added to your collection.</span>";
+        return "<span class='errorMessage-large' id='spnDocsNotAdded'>ERROR: The document(s) you selected could not be added to your collection.</span>";
     }
     
     public function documentsNotDeleted() {
-        return "<span class='errorMessage' id='spnDocsNotDeleted'>ERROR: The document(s) you selected could not be deleted. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnDocsNotDeleted'>ERROR: The document(s) you selected could not be deleted. Please try again.</span>";
     }
     
     public function documentsNotUpdated() {
-        return "<span class='errorMessage' id='spnDocsNotUpdated'>ERROR: The document(s) you modified could not be updated. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnDocsNotUpdated'>ERROR: The document(s) you modified could not be updated. Please try again.</span>";
     }
     
     public function documentsUpdated() {
@@ -75,23 +75,23 @@ class InfoMessage {
     }
     
     public function fileDuplicate($file) {
-        return "<span class='errorMessage' id='spnDuplicateFile'>ERROR: $file has already been uploaded. Please try a different file.</span>";
+        return "<span class='errorMessage-large' id='spnDuplicateFile'>ERROR: $file has already been uploaded. Please try a different file.</span>";
     }
     
     public function fileExceedsMaxSize($file) {
-        return "<span class='errorMessage' id='spnMaxFileSize'>ERROR: $file max file size exceeded. Please try a different file.</span>";
+        return "<span class='errorMessage-large' id='spnMaxFileSize'>ERROR: $file max file size exceeded. Please try a different file.</span>";
     }
     
     public function fileNoFilesSelected() {
-        return "<span class='errorMessage' id='spnNoFilesSelected'>ERROR: No file(s) selected. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnNoFilesSelected'>ERROR: No file(s) selected. Please try again.</span>";
     }
     
     public function fileUnsupported($file) {
-        return "<span class='errorMessage' id='spnFileUnsupported'>ERROR: $file file type not supported. Please try a different file.</span>";
+        return "<span class='errorMessage-large' id='spnFileUnsupported'>ERROR: $file file type not supported. Please try a different file.</span>";
     }
 
     public function fileUploadFailed($file) {
-        return "<span class='errorMessage' id='spnFileUploadFailed'>ERROR: $file upload failed. Please try again or else contact the system administrator.</span>";
+        return "<span class='errorMessage-large' id='spnFileUploadFailed'>ERROR: $file upload failed. Please try again or else contact the system administrator.</span>";
     }
     
     public function fileUploadSuccessful() {
@@ -111,11 +111,11 @@ class InfoMessage {
     }
     
     public function friendsRequestNotAccepted() {
-        return "<span class='errorMessage' id='spnFriendNotAccepted'>ERROR: Unable to accept the request. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnFriendNotAccepted'>ERROR: Unable to accept the request. Please try again.</span>";
     }
     
     public function friendsRequestNotIgnored() {
-        return "<span class='errorMessage' id='spnFriendNotIgnored'>ERROR: Unable to ignore the request. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnFriendNotIgnored'>ERROR: Unable to ignore the request. Please try again.</span>";
     }
     
     public function friendsNo() {
@@ -123,7 +123,7 @@ class InfoMessage {
     }
     
     public function friendsRequestNotSent() {
-        return "<span class='errorMessage' id='spnFriendRequestNotSent'>ERROR: Your friend request could not be sent. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnFriendRequestNotSent'>ERROR: Your friend request could not be sent. Please try again.</span>";
     }
     
     public function friendsRequestSent($user) {
@@ -131,15 +131,15 @@ class InfoMessage {
     }
     
     public function invalidEmail() {
-        return "<span class='errorMessage' id='spnInvalidEmail'>ERROR: Please provide a valid email address.</span>";
+        return "<span class='errorMessage-large' id='spnInvalidEmail'>ERROR: Please provide a valid email address.</span>";
     }
     
     public function invalidEntries() {
-        return "<span class='errorMessage' id='spnInvalidEntries'>ERROR: Please provide valid entries for each field.</span>";
+        return "<span class='errorMessage-large' id='spnInvalidEntries'>ERROR: Please provide valid entries for each field.</span>";
     }
     
     public function invalidPassword() {
-        return "<span class='errorMessage' id='spnInvalidPassword'>ERROR: The old password you provided does not match your current password. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnInvalidPassword'>ERROR: The old password you provided does not match your current password. Please try again.</span>";
     }
     
     public function loginUnsuccessful() {
@@ -147,7 +147,7 @@ class InfoMessage {
     }
     
     public function messageNotSent() {
-        return "<span class='errorMessage' id='spnMessageNotSent'>ERROR: Unable to send message. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnMessageNotSent'>ERROR: Unable to send message. Please try again.</span>";
     }
     
     public function messageSent($sentTo) {
@@ -167,11 +167,11 @@ class InfoMessage {
     }
     
     public function messagesNotDeleted() {
-        return "<span class='errorMessage' id='spnMessageNotDeleted'>ERROR: The message(s) you selected could not be deleted. Please try again. </span>";
+        return "<span class='errorMessage-large' id='spnMessageNotDeleted'>ERROR: The message(s) you selected could not be deleted. Please try again. </span>";
     }
     
     public function missingTo() {
-        return "<span class='errorMessage' id='spnMissingTo'>ERROR: You must enter a valid user to share these documents with. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnMissingTo'>ERROR: You must enter a valid user to share these documents with. Please try again.</span>";
     }
     
     public function missingPW() {
@@ -187,19 +187,19 @@ class InfoMessage {
     }
     
     public function passwordsDontMatch() {
-        return "<span class='errorMessage' id='spnPasswordsDontMatch'>ERROR: The new passwords you entered don't match. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnPasswordsDontMatch'>ERROR: The new passwords you entered don't match. Please try again.</span>";
     }
     
     public function passwordUpdated() {
-        return "<span class='errorMessage' id='spnPWUpdated'>ERROR: Your password has been updated.</span>";
+        return "<span class='infoMessage' id='spnPWUpdated'>ERROR: Your password has been updated.</span>";
     }
     
     public function passwordUpdateFailed() {
-        return "<span class='errorMessage' id='spnPWUpdateFailed'>ERROR: Your password could not be updated. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnPWUpdateFailed'>ERROR: Your password could not be updated. Please try again.</span>";
     }
     
     public function publicCollectionBlankTitle() {
-        return "<span class='errorMessage' id='spnBlankCollectTitle'>ERROR: The title field cannot be blank. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnBlankCollectTitle'>ERROR: The title field cannot be blank. Please try again.</span>";
     }
     
     public function publicCollectionAdded($collectionTitle) {
@@ -207,7 +207,7 @@ class InfoMessage {
     }
     
     public function publicCollectionNotAdded($collectionTitle) {
-        return "<span class='errorMessage' id='spnPublicCollectNotAdded'>ERROR: The '$collectionTitle' collection could not be added. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnPublicCollectNotAdded'>ERROR: The '$collectionTitle' collection could not be added. Please try again.</span>";
     }
     
     public function publicCollectionDeleted($collectionTitle) {
@@ -215,19 +215,19 @@ class InfoMessage {
     }
     
     public function publicCollectionNotDeleted($collectionTitle) {
-        return "<span class='errorMessage' id='spnPublicCollectNotDeleted'>ERROR: The '$collectionTitle' collection could not be deleted. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnPublicCollectNotDeleted'>ERROR: The '$collectionTitle' collection could not be deleted. Please try again.</span>";
     }
     
     public function publicCollectionNotSelected() {
-        return "<span class='errorMessage' id='spnPublicCollectNotSelected'>ERROR: No valid collection has been selected. Please return to the <a href='managePublicCollections'>View/Manage Public Collections</a> page to make a selection.</span>";
+        return "<span class='errorMessage-large' id='spnPublicCollectNotSelected'>ERROR: No valid collection has been selected. Please return to the <a href='managePublicCollections'>View/Manage Public Collections</a> page to make a selection.</span>";
     }
     
     public function publicCollectionNoDocumentsSelected() {
-        return "<span class='errorMessage' id='spnPublicCollectNoDocsSelected'>ERROR: No documents have been selected for sharing. Please add some documents and try again.</span>";
+        return "<span class='errorMessage-large' id='spnPublicCollectNoDocsSelected'>ERROR: No documents have been selected for sharing. Please add some documents and try again.</span>";
     }
     
     public function publicCollectionDocumentsNotAdded() {
-        return "<span class='errorMessage' id='spnPublicCollectNoDocsAdded'>ERROR: The documents you selected could not be added to a collection. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnPublicCollectNoDocsAdded'>ERROR: The documents you selected could not be added to a collection. Please try again.</span>";
     }
     
     public function publicCollectionNoneAvailable() {
@@ -235,7 +235,7 @@ class InfoMessage {
     }
     
     public function publicCollectionDuplicateDocument($documentTitle) {
-        return "<span class='errorMessage' id='spnPublicCollectDuplicate'>ERROR: $documentTitle could not be added to the collection because it's already been added. Please try adding a different document.</span>";
+        return "<span class='errorMessage-large' id='spnPublicCollectDuplicate'>ERROR: $documentTitle could not be added to the collection because it's already been added. Please try adding a different document.</span>";
     }
     
     public function profileUpdated() {
@@ -243,7 +243,7 @@ class InfoMessage {
     }
     
     public function profileUpdateFailed() {
-        return "<span class='errorMessage' id='spnProfileUpdateFailed'>ERROR: Your profile could not be updated. Please try again.</span>";
+        return "<span class='errorMessage-large' id='spnProfileUpdateFailed'>ERROR: Your profile could not be updated. Please try again.</span>";
     }
     
     public function searchValue($searchValue) {

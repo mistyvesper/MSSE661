@@ -14,7 +14,7 @@
 
     echo "<span class='documents' id='spnMyDocuments'>
             <h1 class='documents' id='hdrMyDocuments'>My Documents</h1>
-                <table class='documents' id='tblMyDocuments'>
+                <table class='documents' id='tblMyDocumentsOptions'>
                     <td class='documents' id='tdSearch'>
                         <form class='documents' id='frmSearch' method='post' action='index.php' enctype='multipart/form-data'>
                             <input class='documents' id='inSearchValue' type='text' name='searchValue'>
@@ -39,11 +39,11 @@
     if (isset($_SESSION['displayMessage'])) {
         echo $_SESSION['displayMessage'];
         echo "<br><br>";
-    } else if (isset($_SESSION['searchValue'])) {
+    } else if (isset($_SESSION['postedSearchValue'])) {
         echo "<span class='searchValues' id='spnSearchValues'>Search Value(s): ";
         $i = 1; 
-        foreach ($_SESSION['searchValue'] as $searchValue) {
-            if (count($_SESSION['searchValue']) > 1 && $i != count($_SESSION['searchValue'])) {
+        foreach ($_SESSION['postedSearchValue'] as $searchValue) {
+            if (count($_SESSION['postedSearchValue']) > 1 && $i != count($_SESSION['postedSearchValue'])) {
                 echo $searchValue . ", ";
             } else {
                 echo $searchValue;

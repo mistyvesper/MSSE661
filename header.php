@@ -33,6 +33,24 @@
     require_once($rootDirectory . '/Resources/fileMaintenance.php');
     require_once($rootDirectory . '/Resources/sanitize.php');
     require_once($rootDirectory . '/Resources/databaseMaintenance.php');
+    
+    // initialize database and display messages
+    
+    $database = new Database($dbHost, $dbUser, $dbPassword, $dbDBName);
+    $infoMessage = new InfoMessage();
+    unset($_SESSION['displayMessage']);
+    
+    // check if get request received
+    
+    if (isset($_GET)) {
+        foreach ($_GET as $get) {
+          if ($get == "netbeans-xdebug") {
+              continue;
+          } else {
+              $getRequest = true;
+          }
+        }  
+    }
 
     // check if user is logged in
     
@@ -43,6 +61,19 @@
         $userShareDirectory = $userDirectory . '/sharedFiles/';
         createDirectory($userDirectory);
         createDirectory($userShareDirectory);
+        
+        // instantiate objects common to all pages
+        
+        $collection = new Collection($appUser, $database);
+        $messages = new Messages($appUser, $database);
+        $users = new Users($appUser, $database);
+        
+        // get documents
+    
+        $collection->getDocuments();
+        $collection->getPendingSharedDocuments();
+        $collection->getReceivedDocuments();
+        
     } else if (strpos($_SERVER['SCRIPT_NAME'], "loginPage.php") > 0) {
         $loggedIn = FALSE;
     } else if (strpos($_SERVER['SCRIPT_NAME'], "registerForAccount.php") > 0 
@@ -50,21 +81,10 @@
                 || strpos($_SERVER['SCRIPT_NAME'], "registerForAccount.php") > 0
                 || strpos($_SERVER['SCRIPT_NAME'], "logoutPage.php") > 0) {
         $loggedIn = FALSE;
-    } else {
+    } else if (!$getRequest) {
         header('Location: loginPage.php');
         $loggedIn = FALSE;
-    }
-    
-    // instantiate objects common to all pages
-
-    $database = new Database($dbHost, $dbUser, $dbPassword, $dbDBName);
-    $collection = new Collection($appUser, $database);
-    $messages = new Messages($appUser, $database);
-    $users = new Users($appUser, $database);
-    $infoMessage = new InfoMessage();
-    unset($_SESSION['displayMessage']);
-    
-    
+    }      
     
     // check for submitted values to redirect pages as needed
     
@@ -98,8 +118,11 @@
 
     // share documents
     
-    if (isset($_POST['share']) && isset($_POST['document'])) { 
-        $collection->addSharedDocuments($_POST['document']);
+    if (isset($_POST['share'])) { 
+        if (isset($_POST['document'])) {
+            $collection->addSharedDocuments($_POST['document']);
+        }
+        $_SESSION['sendingLocation'] = 'index.php';
         header('Location: shareDocuments.php');        
     } 
     
@@ -125,6 +148,7 @@
     
     if (isset($_POST['searchValue']) && $_POST['searchValue'] != '') {
         $searchValue = strtolower(sanitizeString($_POST['searchValue']));
+        $_SESSION['postedSearchValue'][] = $searchValue;
         $collection->searchCollection($searchValue);
     } 
     
@@ -132,7 +156,9 @@
     
     if (isset($_POST['clearSearch'])) {
         unset($_SESSION['collection']);
+        unset($_SESSION['searchCollection']);
         unset($_SESSION['searchValue']);
+        unset($_SESSION['postedSearchValue']);
         $collection->getDocuments();
     }
     
@@ -141,6 +167,13 @@
     if (isset($_POST['sortDoc'])) {
         $_SESSION['ascending'] = ($_SESSION['ascending']) ? false : true;
         $collection->sortCollection($_POST['sortDoc'], $_SESSION['ascending']);       
+    }
+    
+    // upload documents
+    
+    if (isset($_POST['upload'])) {
+        $_SESSION['fileUploadCount'] = 1;
+        header('Location: uploadDocument.php');
     }
     
 /**********************************************************************************************************
@@ -171,7 +204,11 @@
     
     if (isset($_POST['cancelShare']) && isset($_SESSION['pendingSharedCollection'])) {
         $collection->deletePendingSharedDocuments();
-        header('Location: index.php');
+        if (isset($_SESSION['sendingLocation']) && $_SESSION['sendingLocation'] == 'viewAllFriends.php') {
+            header('Location: viewAllFriends.php');
+        } else {
+            header('Location: index.php');
+        } 
     }
     
 /**********************************************************************************************************
@@ -180,9 +217,11 @@
     
     // add documents to pending public collection docs
     
-    if (isset($_POST['addToPendingPublicCollection']) && isset($_POST['document'])) {
+    if (isset($_POST['addToPendingPublicCollection'])) {
 
-        $collection->addDocumentsToPendingPublicCollection();
+        if (isset($_POST['document'])) {
+            $collection->addDocumentsToPendingPublicCollection();
+        }
         
         // redirect to add to collection page as needed
         
@@ -461,6 +500,8 @@
         
         $user = $users->getUserByID(key($_POST['sendMessage']));
         $_SESSION['sendTo'] = $user['userName'];
+        $collection->deletePendingSharedDocuments();
+        $_SESSION['sendingLocation'] = 'viewAllFriends.php';
         header('Location: shareDocuments.php');
         
     }
@@ -499,14 +540,6 @@
         }
     }
     
- 
-    
-    // get documents
-    
-    $collection->getDocuments();
-    $collection->getPendingSharedDocuments();
-    $collection->getReceivedDocuments();
-    
     // display page header
     
     if ((!strpos($_SERVER['SCRIPT_NAME'], "loginPage.php") 
@@ -519,13 +552,97 @@
     
         $upperAppUser = strtoupper($appUser);
         
-        echo "<html>
+        echo "<!DOCTYPE html>
+                <html>
                     <head>
                         <meta charset='UTF-8'>
                         <title>Nano-site</title>
                         <style>
                             @import url('/Stylesheets/main.css');
                         </style>
+                        <style>
+                            td {
+                                overflow: hidden;
+                            }
+                            #subMyDocumentsTitleHeader {
+                                width: 354px;
+                            }
+                            #trMyDocumentsContent:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trPendingShareDocs:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trPendingPublicDocs:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trViewAllFriends:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trViewAllUsers:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trViewPublicCollection:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trShowPublicCollections:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trReceivedMessages:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trReceivedDocumentsMsg:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trSentMessages:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trSentMessagesMsg:hover {
+                                background-color: whitesmoke;
+                            }
+                            #trUploadDocumentsType {
+                                background-color: whitesmoke;
+                            }
+                            #spnFriendsAndUsers {
+                                position: absolute;
+                                top: 25%;
+                                left: 4%;
+                            }
+                            #spnManagePublicCollections {
+                                position: absolute;
+                                top: 25%;
+                                left: 5%;
+                            }
+                            #spnViewPublicCollection {
+                                position: absolute;
+                                top: 25%;
+                                left: 5%;
+                            }
+                            #spnReceivedMessages {
+                                position: absolute;
+                                top: 25%;
+                                left: 7%;
+                            }
+                            #spnMessageReceived {
+                                position: absolute;
+                                top: 25%;
+                                left: 5%;
+                            }
+                            #spnSentMessagesMsg {
+                                position: absolute;
+                                top: 25%;
+                                left: 5%;
+                            }
+                        </style>
+                        <link rel='stylesheet' type='text/css' href='https://cdn.datatables.net/1.10.19/css/jquery.dataTables.css'>
+                        <script src='http://code.jquery.com/jquery-latest.min.js'></script>
+                        <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.js'
+                            integrity='sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30='crossorigin='anonymous'>
+                        </script>
+                        <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js'></script>
+                        <script src='/JavaScript/searchCollection.js'></script>
+                        <script src='/JavaScript/pagination.js'></script>
+                        <script src='/JavaScript/checkForUpdates.js'></script>
                     </head>
                     <body class='body-loggedin' id='bdyLoggedIn'>
                         <span class='loggedIn' id='spnLoggedIn'>
@@ -538,11 +655,36 @@
                                 </tr>
                                 <tr class='loggedInBottom' id='trMenuIcons'>
                                     <td class='loggedInBottom' id='tdMenuIcons' colspan='3' align='right'>
-                                        <a class='link' id='lnkHome' href='index.php'><img class='img' id='imgHomeIcon' src='Media/home.png' style='width:35px;height:35px;'></a>
-                                        <a class='link' id='lnkFriends' href='viewAllFriends.php'><img class='img' id='imgFriendsIcon' src='Media/friends.png' style='width:45px;height:45px;'></a>
-                                        <a class='link' id='lnkCollections' href='managePublicCollections.php'><img class='img' id='imgCollectionsIcon' src='Media/collections.png' style='width:30px;height:30px;'></a>
-                                        <a class='link' id='lnkMessages' href='viewAllReceivedMessages.php'><img class='img' id='imgMailIcon' src='Media/mail.png' style='width:35px;height:35px;'></a>
-                                        <a class='link' id='lnkProfile' href='manageProfile.php'><img class='img' id='imgSettingsIcon' src='Media/settings.png' style='width:35px;height:35px;'></a>
+                                        <div class='tooltip' div='divHome'>
+                                            <span class='tooltiptext'>Home</span>
+                                            <a class='link' id='lnkHome' href='index.php'>
+                                                <img class='img' id='imgHomeIcon' src='Media/home.png' style='width:35px;height:35px;'>
+                                            </a>
+                                        </div>
+                                        <div class='tooltip' id='divViewAllFriends'>
+                                            <span class='tooltiptext'>Manage Friends</span>
+                                            <a class='link' id='lnkFriends' href='viewAllFriends.php'>
+                                                <img class='img' id='imgFriendsIcon' src='Media/friends.png' style='width:45px;height:45px;'>
+                                            </a>
+                                        </div>
+                                        <div class='tooltip' id='divManageCollections'>
+                                            <span class='tooltiptext'>Manage Collections</span>
+                                            <a class='link' id='lnkCollections' href='managePublicCollections.php'>
+                                                <img class='img' id='imgCollectionsIcon' src='Media/collections.png' style='width:30px;height:30px;'>
+                                            </a>
+                                        </div>
+                                        <div class='tooltip' id='divMessages'>
+                                            <span class='tooltiptext'>View Messages</span>
+                                            <a class='link' id='lnkMessages' href='viewAllReceivedMessages.php'>
+                                                <img class='img' id='imgMailIcon' src='Media/mail.png' style='width:35px;height:35px;'>
+                                            </a>
+                                        </div>
+                                        <div class='tooltip' id='divManageProfile'>
+                                            <span class='tooltiptext'>Manage Profile</span>
+                                            <a class='link' id='lnkProfile' href='manageProfile.php'>
+                                                <img class='img' id='imgSettingsIcon' src='Media/settings.png' style='width:35px;height:35px;'>
+                                            </a>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>

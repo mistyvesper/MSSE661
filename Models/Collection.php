@@ -43,7 +43,8 @@ class Collection
         
         // check if session variable or search values already set
         
-        if (!isset($_SESSION['collection']) || (count($_SESSION['collection']) == 0 && !isset($_SESSION['searchValue']))) {
+        if ((!isset($_SESSION['collection']) && !isset($_POST['search']) && !isset($_SESSION['searchValue'])) 
+                || (count($_SESSION['collection']) == 0 && !isset($_SESSION['searchValue']) && !isset($_POST['search']))) {
             
             // reset collection array
         
@@ -187,6 +188,10 @@ class Collection
     
     public function getDocumentTypes() {
         
+        if (isset($this->docTypes)) {
+            unset($this->docTypes);
+        }
+
         // open database connection
         
         $this->db->getDBConnection();
@@ -260,7 +265,7 @@ class Collection
                 unset($_SESSION['collection']);
                 $_SESSION['collection'] = $this->getDocuments(); // update collection array
             } else {
-                $_SESSION['displayMessage'] = InfoMessage::dbDocumentsNotAdded();
+                $_SESSION['displayMessage'] = InfoMessage::documentsNotAdded();
                 $this->db->closeDBConnection();
                 return false;
             }
@@ -281,6 +286,7 @@ class Collection
         
         $i = 0;
         unset($_SESSION['collection']);
+        unset($_SESSION['displayMessages']);
         $this->getDocuments();
         $documentCount = $this->getDocumentCount();
         $docUploadDate = (string)date("Y/m/d h:i:s");
@@ -299,7 +305,10 @@ class Collection
 
             if ($file['name'] == '') {
                 continue;
-            } else if ($file['error'] == 0 || $docType != '') {
+            } else if ($file['error'] == 1 || $file['error'] == 2 || $file['size'] > 26214400) {
+                $_SESSION['displayMessages'][] = InfoMessage::fileExceedsMaxSize($file['name']);
+                $_SESSION['fileUploadCount'] = 1;
+            } else if ($file['error'] == 0 || $docType != '' && ($file['error'] != 1 || $file['error'] != 2 || $file['size'] < 26214400)) {
 
                 $newDocTypeDirectory = $userDirectory . $docType . '/';
                 $sanitizedFileName = sanitizeString($file['name']);
@@ -340,24 +349,30 @@ class Collection
                         $error = false;
                     } else {
                         $error = true;
-                        $_SESSION['displayMessage'][] = InfoMessage::fileUploadFailed($file['name']);
+                        $_SESSION['displayMessages'][] = InfoMessage::fileUploadFailed($file['name']);
+                        $_SESSION['fileUploadCount'] = 1;
                     }
                 } else if ($this->getDocumentID($document) > 0) {
                     $error = true;
-                    $_SESSION['displayMessage'][] = InfoMessage::fileDuplicate($file['name']);
+                    $_SESSION['displayMessages'][] = InfoMessage::fileDuplicate($file['name']);
+                    $_SESSION['fileUploadCount'] = 1;
                 } else if ($docExtension == '') {
                     $error = true;
-                    $_SESSION['displayMessage'] = InfoMessage::fileUnsupported($file['name']);
+                    $_SESSION['displayMessages'][] = InfoMessage::fileUnsupported($file['name']);
+                    $_SESSION['fileUploadCount'] = 1;
                 } else {
                     $error = true;
-                    $_SESSION['displayMessage'] = InfoMessage::fileUploadFailed($file['name']);
+                    $_SESSION['displayMessages'][] = InfoMessage::fileUploadFailed($file['name']);
+                    $_SESSION['fileUploadCount'] = 1;
                 }
-            } else if ($file['error'] == 1 || $file['error'] == 2) {
+            } else if ($file['error'] == 1 || $file['error'] == 2 || $file['size'] > 26214400) {
                 $error = true;
-                $_SESSION['displayMessage'] = InfoMmessage::fileExceedsMaxSize($file['name']);
+                $_SESSION['displayMessages'][] = InfoMmessage::fileExceedsMaxSize($file['name']);
+                $_SESSION['fileUploadCount'] = 1;
             } else if ($file['error'] > 3) {
                 $error = true;
-                $_SESSION['displayMessage'] = InfoMessage::fileUploadFailed($file['name']);
+                $_SESSION['displayMessages'][] = InfoMessage::fileUploadFailed($file['name']);
+                $_SESSION['fileUploadCount'] = 1;
             } 
 
             $i++;
@@ -595,45 +610,64 @@ class Collection
     
     public function searchCollection($searchValue) {
         
-        // get documents and search value length
+        // check if search value "posted" and set collection variables accordingly
         
-        $this->getDocuments();
-        $searchValueLength = strlen($searchValue);
-        
-        // search document
-
-        foreach($this->collection as $key => $document) {
-
-            $type = strtolower($document['type']);
-            $title = strtolower($document['title']);
-            $extension = strtolower($document['extension']);
-            $size = strtolower($document['size']);
-            $uploadDate = strtolower($document['uploadDate']);
+        if (isset($_POST['searchValue']) && $_POST['searchValue'] != '') {
             
-            // check for matches
+            // set session variables
+            
+            $this->collection = $_SESSION['searchCollection'];
+            $_SESSION['collection'] = $_SESSION['searchCollection'];
+            
+            // set search values session variables
 
-            if (!strpos($type, $searchValue) && substr($type, 0, $searchValueLength) != $searchValue
-                    && !strpos($title, $searchValue) && substr($title, 0, $searchValueLength) != $searchValue
-                    && !strpos($extension, $searchValue) && substr($extension, 0, $searchValueLength) != $searchValue
-                    && !strpos($size, $searchValue) && substr($size, 0, $searchValueLength) != $searchValue
-                    && !strpos($uploadDate, $searchValue) && substr($uploadDate, 0, $searchValueLength) != $searchValue) {
-                unset($this->collection[$key]);
+            $_SESSION['searchValue'][] = $searchValue;
+            
+        } else {
+            
+            // get documents and search value length
+        
+            $searchCollection = $_SESSION['searchCollection'];
+            $searchValueLength = strlen($searchValue);
+
+            // search document
+
+            foreach($searchCollection as $key => $document) {
+
+                $type = strtolower($document['type']);
+                $title = strtolower($document['title']);
+                $extension = strtolower($document['extension']);
+                $size = strtolower($document['size']);
+                $uploadDate = strtolower($document['uploadDate']);
+
+                // check for matches
+
+                if (!strpos($type, $searchValue) && substr($type, 0, $searchValueLength) != $searchValue
+                        && !strpos($title, $searchValue) && substr($title, 0, $searchValueLength) != $searchValue
+                        && !strpos($extension, $searchValue) && substr($extension, 0, $searchValueLength) != $searchValue
+                        && !strpos($size, $searchValue) && substr($size, 0, $searchValueLength) != $searchValue
+                        && !strpos($uploadDate, $searchValue) && substr($uploadDate, 0, $searchValueLength) != $searchValue) {
+                    unset($searchCollection[$key]);
+                }
             }
-        }
-        
-        // set search values session variables
+
+            // return filtered result set
+
+            $_SESSION['searchCollection'] = $searchCollection;
             
-        $_SESSION['searchValue'][] = $searchValue;
-        
-        // return filtered result set
-        
-        $_SESSION['collection'] = $this->collection;
+        }
     }
     
     // function to sort collection by type
     // https://secure.php.net/manual/en/function.array-multisort.php
     
     public function sortCollection($arrayKey, $ascending) {
+        
+        if (substr($arrayKey, 0, strpos($arrayKey, ' ')) == 'Upload') {
+            $arrayKey = 'Upload Date';
+        } else {
+            $arrayKey = substr($arrayKey, 0, strpos($arrayKey, ' '));
+        }
         
         // get sort category 
         
@@ -644,10 +678,10 @@ class Collection
             case 'Title':
                 $sortCategory = 'title';
                 break;
-            case 'Extension':
+            case 'Ext':
                 $sortCategory = 'extension';
                 break;
-            case 'File Size':
+            case 'Size':
                 $sortCategory = 'fileSizeInBytes';
                 break;
             case 'Upload Date':
@@ -684,7 +718,7 @@ class Collection
         
         // check for existing documents
 
-        if (count($this->collection) == 0) {
+        if (count($this->collection) == 0 && !isset($_SESSION['searchCollection'])) {
             
             // create new error message
   
@@ -692,6 +726,14 @@ class Collection
             
         } else {
             
+            // check if active search in place
+            
+            if (isset($_SESSION['searchCollection'])) {
+                $collection = $_SESSION['searchCollection'];
+            } else {
+                $collection = $this->collection;
+            }
+
             // get document types
             
             $docTypes = $this->getDocumentTypes();
@@ -699,32 +741,35 @@ class Collection
             // iterate through Collection array to display Documents
 
             echo "<form class='documents' id='frmMyDocuments' method='post' action='index.php' enctype='multipart/form-data'>
-                    <table class='documents' id='tblMyDocuments'>
-                        <tr class='documents' id='trMyDocumentsHeaders'>
-                            <th class='form-label-small-center' id='thMyDocumentsSelectHeader'>
-                                <input class='form-submit-small-header-center' id='subMyDocumentsSelectHeader' type='submit' name='select' value='Select' disabled>
-                            </th>
-                            <th class='form-label-medium-center' id='thMyDocumentsTypeHeader'>
-                                <input class='form-submit-medium-header-center' id='subMyDocumentsTypeHeader' type='submit' name='sortDoc' value='Type'>
-                            </th>
-                            <th class='form-label-large-left' id='thMyDocumentsTitleHeader'>
-                                <input class='form-submit-large-header-left' id='subMyDocumentsTitleHeader' type='submit' name='sortDoc' value='Title'>
-                            </th>
-                            <th class='form-label-small-center' id='thMyDocumentsExtensionHeader' align='center'>
-                                <input class='form-submit-small-header-center' id='subMyDocumentsExtensionHeader' type='submit' name='sortDoc' value='Extension'>
-                            </th>
-                            <th class='form-label-small-center' id='thMyDocumentsFileSizeHeader' align='center'>
-                                <input class='form-submit-small-header-center' id='subMyDocumentsFileSizeHeader' type='submit' name='sortDoc' value='File Size'>
-                            </th>
-                            <th class='form-label-medium-center' id='thMyDocumentsUploadDateHeader' align='center'>
-                                <input class='form-submit-medium-header-center' id='subMyDocumentsUploadDateHeader' type='submit' name='sortDoc' value='Upload Date'>
-                            </th>
-                            <th class='form-label-small-center' id='thMyDocumentsDownloadHeader' align='center'>
-                                <input class='form-submit-small-header-center' type='submit' name='download' value='Download' disabled>
-                            </th>
-                        </tr>";
+                    <table class='documents compact' id='tblMyDocuments' cellspacing=0>
+                        <thead class='documents' id='theadMyDocumentsHeaders'>
+                            <tr class='documents' id='trMyDocumentsHeaders'>
+                                <th class='form-label-small-center' id='thMyDocumentsSelectHeader'>
+                                    <input class='form-submit-small-header-center' id='subMyDocumentsSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-label-medium-center' id='thMyDocumentsTypeHeader'>
+                                    <input class='form-submit-medium-header-center' id='subMyDocumentsTypeHeader' type='submit' name='sortDoc' value='Type &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-large-left' id='thMyDocumentsTitleHeader'>
+                                    <input class='form-submit-large-header-left' id='subMyDocumentsTitleHeader' type='submit' name='sortDoc' value='Title &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-small-center' id='thMyDocumentsExtensionHeader' align='center'>
+                                    <input class='form-submit-small-header-center' id='subMyDocumentsExtensionHeader' type='submit' name='sortDoc' value='Ext &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-small-center' id='thMyDocumentsFileSizeHeader' align='center'>
+                                    <input class='form-submit-small-header-center' id='subMyDocumentsFileSizeHeader' type='submit' name='sortDoc' value='Size &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-medium-center' id='thMyDocumentsUploadDateHeader' align='center'>
+                                    <input class='form-submit-medium-header-center' id='subMyDocumentsUploadDateHeader' type='submit' name='sortDoc' value='Upload Date &uarr;&darr;'>
+                                </th>
+                                <th class='form-label-small-center' id='thMyDocumentsDownloadHeader' align='center'>
+                                    <input class='form-submit-small-header-center' type='submit' name='download' value='Download' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class='documents' id='tbodyMyDocumentsContent'>";
             
-            foreach ($this->collection as $key => $document) {
+            foreach ($collection as $key => $document) {
                 
                 $documentID = $document['documentID'];
                 $type = $document['type'];
@@ -733,7 +778,7 @@ class Collection
 
                 echo "<tr class='documents' id='trMyDocumentsContent'>
                         <td class='form-text-small-center' id='tdMyDocumentsCheckbox'>
-                            <input class='checkbox' id='chkMyDocumentsCheckbox' type='checkbox' name='document[]' value='$documentID'>
+                            <input class='checkbox' id='chkMyDocumentsCheckbox" . $key . "' type='checkbox' name='document[]' value='$documentID'>
                         </td>
                         <td class='form-text-medium-center' id='tdMyDocumentsType'>
                             <select class='form-text-medium-center' id='selMyDocumentsType' name='docType[]'>";
@@ -749,7 +794,7 @@ class Collection
                 
                  echo "</select></td>
                             <td class='form-text-large-left' id='tdMyDocumentsTitle'>
-                                <input class='form-text-large-left' id='inMyDocumentsTitle' type='text' name='docTitle[]' value='" . $document['title'] . "'>
+                                <input class='form-text-large-left inMyDocumentsTitle' id='inMyDocumentsTitle' type='text' name='docTitle[]' value='" . $document['title'] . "'>
                             </td>
                             <td class='form-text-small-center' id='tdMyDocumentsExtension'>"
                                 . $document['extension'] . 
@@ -766,7 +811,7 @@ class Collection
                         </tr>";
             }
 
-            echo "</table>
+            echo "</tbody></table>
                     <br>
                     <table class='documents' id='tblMyDocumentsSubmitButtons'>
                         <tr class='documents' id='trMyDocumentsSubmitButtons'>
@@ -1182,32 +1227,32 @@ class Collection
             // iterate through shared Collection array to display Documents
 
             echo "<table class='documents' id='tblReceivedDocumentsMsg'>
-                    <tr class='documents' id='trReceivedDocumentsMsgHeaders'>
-                        <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgSelectHeader'>
-                            <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgSelectHeader' type='submit' name='select' value='Select' disabled>
-                        </th>
-                        <th class='form-submit-medium-header-center' id='thReceivedDocumentsMsgTypeHeader'>
-                            <input class='form-submit-medium-header-center' id='subReceivedDocumentsMsgTypeHeader' type='submit' name='type' value='Type'>
-                        </th>
-                        <th class='form-submit-large-header-left' id='thReceivedDocumentsMsgTitleHeader'>
-                            <input class='form-submit-large-header-left' id='subReceivedDocumentsMsgTitleHeader' type='submit' name='title' value='Title'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgExtensionHeader'>
-                            <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgExtensionHeader' type='submit' name='extension' value='Extension'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgSizeHeader'>
-                            <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgSizeHeader' type='submit' name='size' value='File Size'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgShareByHeader'>
-                            <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgShareByHeader' type='submit' name='sharedBy' value='From'>
-                        </th>
-                        <th class='form-submit-medium-header-center' id='thReceivedDocumentsMsgShareDateHeader'>
-                            <input class='form-submit-small-header-center' id='thReceivedDocumentsMsgShareDateHeader' type='submit' name='sharedDate' value='Shared Date'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgDownloadHeader'>
-                            <input class='form-submit-small-header-center' id=subReceivedDocumentsMsgDownloadHeader' type='submit' name='download' value='Download' disabled>
-                        </th>
-                    </tr>";
+                    <thead class='documents' id='theadReceivedDocumentsMsg'>
+                        <tr class='documents' id='trReceivedDocumentsMsgHeaders'>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgSelectHeader'>
+                                <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgSelectHeader' type='submit' name='select' value='Select' disabled>
+                            </th>
+                            <th class='form-submit-medium-header-center' id='thReceivedDocumentsMsgTypeHeader'>
+                                <input class='form-submit-medium-header-center' id='subReceivedDocumentsMsgTypeHeader' type='submit' name='type' value='Type' disabled>
+                            </th>
+                            <th class='form-submit-large-header-left' id='thReceivedDocumentsMsgTitleHeader'>
+                                <input class='form-submit-large-header-left' id='subReceivedDocumentsMsgTitleHeader' type='submit' name='title' value='Title' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgExtensionHeader'>
+                                <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgExtensionHeader' type='submit' name='extension' value='Extension' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgSizeHeader'>
+                                <input class='form-submit-small-header-center' id='subReceivedDocumentsMsgSizeHeader' type='submit' name='size' value='File Size' disabled>
+                            </th>
+                            <th class='form-submit-medium-header-center' id='thReceivedDocumentsMsgShareDateHeader'>
+                                <input class='form-submit-small-header-center' id='thReceivedDocumentsMsgShareDateHeader' type='submit' name='sharedDate' value='Shared Date' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thReceivedDocumentsMsgDownloadHeader'>
+                                <input class='form-submit-small-header-center' id=subReceivedDocumentsMsgDownloadHeader' type='submit' name='download' value='Download' disabled>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class='documents' id='tbodyReceivedDocumentsMsg'>";
             
             foreach ($this->receivedCollection as $key => $receivedDocument) {
                 
@@ -1227,7 +1272,6 @@ class Collection
                         <td class='form-text-large-left' id='tdReceivedDocumentsMsgTitle'>$title</td>
                         <td class='form-text-small-center' id='tdReceivedDocumentsMsgExtension'>$extension</td>
                         <td class='form-text-small-center' id='tdReceivedDocumentsMsgSize'>$size</td>
-                        <td class='form-text-small-center' id='tdReceivedDocumentsMsgShareBy'>$sharedBy</td>
                         <td class='form-text-medium-center' id='tdReceivedDocumentsMsgShareDate'>$sharedDate</td>
                         <td class='form-submit-small-center-gray' id='tdReceivedDocumentsMsgDownload'>
                             <input class='form-submit-small-center-gray' id='subReceivedDocumentsMsgDownload' type='submit' name='downloadReceivedDocument[$receivedDocID]' value='Download'>
@@ -1235,7 +1279,7 @@ class Collection
                     </tr>";
             }
 
-            echo "</table></div>";
+            echo "</tbody></table></div>";
         }
     }
     
@@ -1493,21 +1537,23 @@ class Collection
 
             echo "<tr>
                     <th class='form-label-small-center' id='thPendingShareDocsSelectHeader'>
-                        <input class='form-submit-small-header-center' id='subPendingShareDocsSelectHeader' type='submit' name='select' value='Select'>
+                        <input class='form-submit-small-header-center' id='subPendingShareDocsSelectHeader' type='submit' name='select' value='Select' disabled>
                     </th>
                     <th class='form-label-medium-center' id='thPendingShareDocsTypeHeader'>
-                        <input class='form-submit-medium-header-center' id='subPendingShareDocsTypeHeader' type='submit' name='type' value='Type'>
+                        <input class='form-submit-medium-header-center' id='subPendingShareDocsTypeHeader' type='submit' name='type' value='Type' disabled>
                     </th>
                     <th class='form-label-large-center' id='thPendingShareDocsTitleHeader'>
-                        <input class='form-submit-large-header-left' id='subPendingShareDocsTitleHeader' type='submit' name='title' value='Title'>
+                        <input class='form-submit-large-header-left' id='subPendingShareDocsTitleHeader' type='submit' name='title' value='Title' disabled>
                     </th>
                     <th class='form-label-small-center' id='thPendingShareDocsExtensionHeader'>
-                        <input class='form-submit-small-header-center' id='subPendingShareDocsExtensionHeader' type='submit' name='extension' value='Extension'>
+                        <input class='form-submit-small-header-center' id='subPendingShareDocsExtensionHeader' type='submit' name='extension' value='Extension' disabled>
                     </th>
                     <th class='form-label-small-center' id='thPendingShareDocsSizeHeader'>
-                        <input class='form-submit-small-header-center' id='subPendingShareDocsSizeHeader' type='submit' name='size' value='File Size'>
+                        <input class='form-submit-small-header-center' id='subPendingShareDocsSizeHeader' type='submit' name='size' value='File Size' disabled>
                     </th>
-                </tr>";
+                </tr>
+            </thead>
+            <tbody class='documents' id='tbodyPendingShareDocuments'>";
             
             foreach ($this->pendingSharedCollection as $key => $sharedDocument) {
                 
@@ -1803,29 +1849,32 @@ class Collection
             // iterate through shared Collection array to display Documents
 
             echo "<table class='documents' id='tblSentMessagesMsg'>
-                    <tr class='documents' id='trSentMessagesMsgHeaders'>
-                        <th class='form-submit-medium-header-center' id='thSentMessagesMsgTypeHeader'>
-                            <input class='form-submit-small-header-center' id='subSentMessagesMsgTypeHeader' type='submit' name='type' value='Type'>
-                        </th>
-                        <th class='form-submit-large-header-left' id='thSentMessagesMsgTitleHeader'>
-                            <input class='form-submit-large-header-left' id='subSentMessagesMsgTitleHeader' type='submit' name='title' value='Title'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thSentMessagesMsgExtensionHeader'>
-                            <input class='form-submit-small-header-center' id='subSentMessagesMsgExtensionHeader' type='submit' name='extension' value='Extension'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thSentMessagesMsgSizeHeader'>
-                            <input class='form-submit-small-header-center' id='subSentMessagesMsgSizeHeader' type='submit' name='size' value='File Size'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thSentMessagesMsgShareWith'>
-                            <input class='form-submit-small-header-center' id='subSentMessagesMsgShareWith' type='submit' name='sharedWith' value='To'>
-                        </th>
-                        <th class='form-submit-medium-header-center' id='thSentMessagesMsgShareDate'>
-                            <input class='form-submit-small-header-center' id='subSentMessagesMsgShareDate' type='submit' name='sharedDate' value='Shared Date'>
-                        </th>
-                        <th class='form-submit-small-header-center' id='thSentMessagesMsgDownload'>
-                            <input class='form-submit-small-header-center' id='subSentMessagesMsgDownload' type='submit' name='download' value='Download'>
-                        </th>
-                    </tr>";
+                    <thead class='documents' id='theadSentMessagesMsg'>
+                        <tr class='documents' id='trSentMessagesMsgHeaders'>
+                            <th class='form-submit-medium-header-center' id='thSentMessagesMsgTypeHeader'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgTypeHeader' type='submit' name='type' value='Type' disabled>
+                            </th>
+                            <th class='form-submit-large-header-left' id='thSentMessagesMsgTitleHeader'>
+                                <input class='form-submit-large-header-left' id='subSentMessagesMsgTitleHeader' type='submit' name='title' value='Title' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgExtensionHeader'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgExtensionHeader' type='submit' name='extension' value='Extension' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgSizeHeader'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgSizeHeader' type='submit' name='size' value='File Size' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgShareWith'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgShareWith' type='submit' name='sharedWith' value='To' disabled>
+                            </th>
+                            <th class='form-submit-medium-header-center' id='thSentMessagesMsgShareDate'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgShareDate' type='submit' name='sharedDate' value='Shared Date' disabled>
+                            </th>
+                            <th class='form-submit-small-header-center' id='thSentMessagesMsgDownload'>
+                                <input class='form-submit-small-header-center' id='subSentMessagesMsgDownload' type='submit' name='download' value='Download' disabled>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class='documents' id='tbodySentMessagesMsg'>";
             
             foreach ($this->sharedCollection as $key => $sharedDocument) {
                 
@@ -1844,13 +1893,13 @@ class Collection
                         <td class='form-text-small-center' id='tdSentMessagesMsgSize'>$size</td>
                         <td class='form-text-small-center' id='tdSentMessagesMsgShareWith'>$sharedWith</td>
                         <td class='form-text-medium-center' id='tdSentMessagesMsgShareDate'>$sharedDate</td>
-                        <td class='form-submit-small-center-gray' id='tdSentMessagesMsgDownload'>
+                        <td class='form-text-small-center' id='tdSentMessagesMsgDownload'>
                             <input class='form-submit-small-center-gray' id='subSentMessagesMsgDownload' type='submit' name='downloadSharedDocument[$sharedDocID]' value='Download'>
                         </td>
                     </tr>";
             }
 
-            echo "</table>";
+            echo "</tbody></table>";
         }
     }
     
@@ -2216,23 +2265,26 @@ class Collection
             // iterate through Collection array to display Documents
 
             echo "<table class='documents' id='tblPendingPublicCollectDocs'>
+                    <thead class='documents' id=theadPendingPublicCollectDocs'>
                         <tr class='documents' id='trPendingPublicCollectDocsHeaders'>
                             <th class='form-submit-small-header-center' id='thPendingPublicCollectDocsSelectHeader'>
-                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsSelectHeader' type='submit' name='select' value='Select' style='width:75px'>
+                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsSelectHeader' type='submit' name='select' value='Select' style='width:75px' disabled>
                             </th>
                             <th class='form-submit-medium-header-center' id='thPendingPubicCollectDocsTypeHeader'>
-                                <input class='form-submit-medium-header-center' id='inPendingPublicCollectDocsTypeHeader' type='submit' name='sortPendingPublicCollectDoc' value='Type' style='width:150px'>
+                                <input class='form-submit-medium-header-center' id='inPendingPublicCollectDocsTypeHeader' type='submit' name='sortPendingPublicCollectDoc' value='Type' style='width:150px' disabled>
                             </th>
                             <th class='form-submit-large-header-left' id='thPendingPublicCollectDocsTitleHeader'>
-                                <input class='form-submit-large-header-left' id='inPendingPublicCollectDocsTitleHeader' type='submit' name='sortPendingPublicCollectDoc' value='Title' style='width:350px'>
+                                <input class='form-submit-large-header-left' id='inPendingPublicCollectDocsTitleHeader' type='submit' name='sortPendingPublicCollectDoc' value='Title' style='width:350px' disabled>
                             </th>
                             <th class='form-submit-small-header-center' id='thPendingPublicCollectDocsExtensionHeader'>
-                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsExtensionHeader' type='submit' name='sortPendingPublicCollectDoc' value='Extension' style='width:75px'>
+                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsExtensionHeader' type='submit' name='sortPendingPublicCollectDoc' value='Extension' style='width:75px' disabled>
                             </th>
                             <th class='form-submit-small-header-center' id='thPendingPublicCollectDocsSize'>
-                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsSizeHeader' type='submit' name='sortPendingPublicCollectDoc' value='File Size' style='width:75px'>
+                                <input class='form-submit-small-header-center' id='inPendingPublicCollectDocsSizeHeader' type='submit' name='sortPendingPublicCollectDoc' value='File Size' style='width:75px' disabled>
                             </th>
-                        </tr>";
+                        </tr>
+                    </thead>
+                    <tbody class='documents' id='tbodyPendingPublicCollectDocs'>";
             
             foreach ($this->pendingPublicCollectionDocs as $collectDocument) {
                 
@@ -2253,7 +2305,7 @@ class Collection
                     </tr>";
             }
 
-            echo "</table></div>";
+            echo "</tbody></table></div>";
         }
     }
     
@@ -2691,24 +2743,27 @@ class Collection
             // iterate through shared Collection array to display Documents
 
             echo "<form class='documents' id='frmShowPublicCollections' method='post' action='managePublicCollections.php' enctype='multipart/form-data'>
-                    <table class='documents' id='tblShowPublicCollections'>
-                        <tr class='documents' id='trShowPublicCollectionsHeaders'>
-                            <th class='form-submit-large-header-left' id='thShowPublicCollectionsTitleHeader'>
-                                <input class='form-submit-large-header-left' id='subShowPublicCollectionsTitleHeader' type='submit' name='sortPublicCollectionTitle' value='Title'>
-                            </th>
-                            <th class='form-submit-large-header-left' id='thShowPublicCollectionsDescriptionHeader'>
-                                <input class='form-submit-large-header-left' id='subShowPublicCollectionsDescriptionHeader' type='submit' name='sortPublicCollectionDescription' value='Description'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thShowPublicCollectionsOwnerHeader'>
-                                <input class='form-submit-medium-header-center' id='subShowPublicCollectionsOwnerHeader' type='submit' name='sortPublicCollectionOwner' value='Owner'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thShowPublicCollectionsViewHeader'>
-                                <input class='form-submit-small-header-center' id='subShowPublicCollectionsViewHeader' type='submit' name='viewPublicCollection' value='View' disabled>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thShowPublicCollectionsDownloadHeader'>
-                                <input class='form-submit-small-header-center' id='subShowPublicCollectionsDownloadHeader' type='submit' name='deletePublicCollection' value='Delete' disabled>
-                            </th>
-                        </tr>";
+                    <table class='documents compact' id='tblShowPublicCollections'>
+                        <thead class='documents' id='theadShowPublicCollections'>
+                            <tr class='documents' id='trShowPublicCollectionsHeaders'>
+                                <th class='form-submit-medium-header-left' id='thShowPublicCollectionsTitleHeader'>
+                                    <input class='form-submit-medium-header-left' id='subShowPublicCollectionsTitleHeader' type='submit' name='sortPublicCollectionTitle' value='Title' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thShowPublicCollectionsDescriptionHeader'>
+                                    <input class='form-submit-large-header-left' id='subShowPublicCollectionsDescriptionHeader' type='submit' name='sortPublicCollectionDescription' value='Description' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thShowPublicCollectionsOwnerHeader'>
+                                    <input class='form-submit-small-header-center' id='subShowPublicCollectionsOwnerHeader' type='submit' name='sortPublicCollectionOwner' value='Owner' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thShowPublicCollectionsViewHeader'>
+                                    <input class='form-submit-small-header-center' id='subShowPublicCollectionsViewHeader' type='submit' name='viewPublicCollection' value='View' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thShowPublicCollectionsDownloadHeader'>
+                                    <input class='form-submit-small-header-center' id='subShowPublicCollectionsDownloadHeader' type='submit' name='deletePublicCollection' value='Delete' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class='documents' id='tbodyShowPublicCollections'>";
             
             foreach ($this->publicCollection as $collection) {
                 
@@ -2718,25 +2773,25 @@ class Collection
                 $collectOwner = $collection['owner'];
 
                 echo "<tr class='documents' id='trShowPublicCollections'>
-                        <td class='form-text-large-left' id='tdShowPublicCollectionsTitle'>$collectTitle</td>
+                        <td class='form-text-medium-left' id='tdShowPublicCollectionsTitle'>$collectTitle</td>
                         <td class='form-text-large-left' id='tdShowPublicCollectionsDescription'>$collectDescription</td>
-                        <td class='form-text-medium-center' id='tdShowPublicCollectionsOwner'>$collectOwner</td>
-                        <td class='form-submit-small-center-gray' id='tdShowPublicCollectionsView'>
+                        <td class='form-text-small-center' id='tdShowPublicCollectionsOwner'>$collectOwner</td>
+                        <td class='form-text-small-center' id='tdShowPublicCollectionsView'>
                             <input class='form-submit-small-center-gray' id='subShowPublicCollectionsView' type='submit' name='viewPublicCollection[$collectID]' value='View'>
                         </td>";
                 
                 if ($collectOwner == $this->collectionUser) {
-                    echo "<td class='form-submit-small-center-gray' id='tdShowPublicCollectionsDelete'>
+                    echo "<td class='form-text-small-center' id='tdShowPublicCollectionsDelete'>
                             <input class='form-submit-small-center-gray' id='subShowPublicCollectionsDelete' type='submit' name='deletePublicCollection[$collectID]' value='Delete'>
-                        </td>";
+                        </td></tr>";
                 } else {
-                    echo "<td class='form-submit-small-center-gray' id='tdShowPublicCollectionsDelete'>
+                    echo "<td class='form-text-small-center' id='tdShowPublicCollectionsDelete'>
                             <input class='form-submit-small-center-gray' id='subShowPublicCollectionsDelete' type='submit' name='deletePublicCollection[$collectID]' value='Delete' disabled>
-                        </td>";
+                        </td></tr>";
                 }
             }
             
-            echo "</tr></table></form></div>";
+            echo "</tbody></table></form></div>";
         }
     }
     
@@ -2758,29 +2813,32 @@ class Collection
 
             echo "<form class='documents' id='frmViewPublicCollection' method='post' action='viewPublicCollection.php' enctype='multipart/form-data'>
                     <table class='documents' id='tblViewPublicCollection'>
-                        <tr class='documents' id='trViewPublicCollectionHeaders'>
-                            <th class='form-submit-medium-header-center' id='thViewPublicCollectionTypeHeader'>
-                                <input class='form-submit-medium-header-center' id='subViewPublicCollectionTypeHeader' type='submit' name='sortCollectDoc' value='Type'>
-                            </th>
-                            <th class='form-submit-large-header-left' id='thViewPublicCollectionTitleHeader'>
-                                <input class='form-submit-large-header-left' id='subViewPublicCollectionTitleHeader' type='submit' name='sortCollectDoc' value='Title'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thViewPublicCollectionExtensionHeader'>
-                                <input class='form-submit-small-header-center' id='subViewPublicCollectionExtensionHeader' type='submit' name='sortCollectDoc' value='Extension'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thViewPublicCollectionSizeHeader'>
-                                <input class='form-submit-small-header-center' id='subViewPublicCollectionSizeHeader' type='submit' name='sortCollectDoc' value='File Size'>
-                            </th>
-                            <th class='form-submit-medium-header-center' id='thViewPublicCollectionShareDateHeader'>
-                                <input class='form-submit-medium-header-center' id='subViewPublicCollectionShareDateHeader' type='submit' name='sortCollectDoc' value='Share Date'>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thViewPublicCollectionDownloadHeader'>
-                                <input class='form-submit-small-header-center' id='subViewPublicCollectionDownloadHeader' type='submit' name='downloadColllectDoc' value='Download' disabled>
-                            </th>
-                            <th class='form-submit-small-header-center' id='thViewPublicCollectionDeleteHeader'>
-                                <input class='form-submit-small-header-center' id='subViewPublicCollectionDeleteHeader' type='submit' name='deleteCollectDoc' value='Delete' disabled>
-                            </th>
-                        </tr>";
+                        <thead class='documents' id='theadViewPublicCollection'>
+                            <tr class='documents' id='trViewPublicCollectionHeaders'>
+                                <th class='form-submit-medium-header-center' id='thViewPublicCollectionTypeHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewPublicCollectionTypeHeader' type='submit' name='sortCollectDoc' value='Type' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thViewPublicCollectionTitleHeader'>
+                                    <input class='form-submit-large-header-left' id='subViewPublicCollectionTitleHeader' type='submit' name='sortCollectDoc' value='Title' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionExtensionHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionExtensionHeader' type='submit' name='sortCollectDoc' value='Extension' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionSizeHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionSizeHeader' type='submit' name='sortCollectDoc' value='File Size' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewPublicCollectionShareDateHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewPublicCollectionShareDateHeader' type='submit' name='sortCollectDoc' value='Share Date' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionDownloadHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionDownloadHeader' type='submit' name='downloadCollectDoc' value='Download' disabled>
+                                </th>
+                                <th class='form-submit-small-header-center' id='thViewPublicCollectionDeleteHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewPublicCollectionDeleteHeader' type='submit' name='deleteCollectDoc' value='Delete' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody class='documents' id='tbodyViewPublicCollection'>";
             
             foreach ($this->publicCollectionDocs as $collectDocument) {
                 
@@ -2798,16 +2856,16 @@ class Collection
                         <td class='form-text-small-center' id='tdViewPublicCollectionExtension'>$extension</td>
                         <td class='form-text-small-center' id='tdViewPublicCollectionSize'>$size</td>
                         <td class='form-text-medium-center' id='tdViewPublicCollectionShareDate'>$shareDate</td>
-                        <td class='form-submit-small-center-gray' id='tdViewPublicCollectionDownload'>
-                            <input class='form-submit-small-center-gray' id='subViewPublicCollectionDownload' type='submit' name='downloadCollectDocument[$collectionDocumentID]' value='Download' style='width:75px'>
+                        <td class='form-text-small-center' id='tdViewPublicCollectionDownload'>
+                            <input class='form-submit-small-center-gray' id='subViewPublicCollectionDownload' type='submit' name='downloadCollectDocument[$collectionDocumentID]' value='Download'>
                         </td>";
                 
-                if ($owner == $this->collectionuser) {
-                    echo "<td class='form-submit-small-center-gray' id='tdViewPublicCollectionDelete'>
+                if ($owner == $this->collectionUser) {
+                    echo "<td class='form-text-small-center' id='tdViewPublicCollectionDelete'>
                             <input class='form-submit-small-center-gray' id='subViewPublicCollectionDelete' type='submit' name='deleteCollectDocument[$collectionDocumentID]' value='Delete'>
                         </td>";
                 } else {
-                    echo "<td class='form-submit-small-center-gray' id='tdViewPublicCollectionDelete'>
+                    echo "<td class='form-text-small-center' id='tdViewPublicCollectionDelete'>
                             <input class='form-submit-small-center-gray' id='subViewPublicCollectionDelete' type='submit' name='deleteCollectDocument[$collectionDocumentID]' value='Delete' disabled>
                         </td>";
                 }
@@ -2815,7 +2873,7 @@ class Collection
                 echo "</tr>";
             }
 
-            echo "</table></div>";
+            echo "</tbody></table></div>";
         }
     }
     
