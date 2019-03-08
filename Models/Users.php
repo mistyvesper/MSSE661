@@ -399,7 +399,35 @@ class Users {
             
             // create new error message
   
-            echo infoMessage::friendsNo();
+//            echo infoMessage::friendsNo();
+            
+            echo "<form class='documents' id='frmViewAllFriends' method='post' action='viewAllFriends.php' enctype='multipart/form-data'>
+                    <table class='documents' id='tblViewAllFriends'>
+                        <thead class='documents' id='theadViewAllFriends'>
+                            <tr class='documents' id='trViewAllFriendsHeaders'>
+                                <th class='form-submit-small-header-center' id='thViewAllFriendsSelectHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewAllFriendsSelectHeader' type='submit' name='select' value='Select' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllFriendsUserNameHeader'>
+                                    <input class='form-submit-small-header-center' id='subViewAllFriendsUserNameHeader' type='submit' name='sortUserName' value='User Name' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllFriendsFirstNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllFriendsFirstNameHeader' type='submit' name='sortFirstName' value='First Name' disabled>
+                                </th>
+                                <th class='form-submit-small-medium-center' id='thViewAllFriendsLastNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllFriendsLastNameHeader' type='submit' name='sortLastName' value='Last Name' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thViewAllFriendsEmailHeader'>
+                                    <input class='form-submit-large-header-left' id='subViewAllFriendsEmailHeader' type='submit' name='sortEmail' value='Email' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllFriendsSendMsgHeader'>
+                                    <input class='form-submit-medium-header-center' id='thViewAllFriendsSendMsgHeader' type='submit' name='sendMessage' value='Send Message' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table><br>
+                    <input class='form-submit-button' id='subViewAllFriendsDelete' type='submit' name='deleteFriends[$userID]' value='Delete'>
+                </form>";
             
         } else {
         
@@ -470,7 +498,30 @@ class Users {
             
             // create new error message
   
-            echo infoMessage::usersNo();
+//            echo infoMessage::usersNo();
+            
+            echo "<form class='documents' id='frmViewAllUsers' method='post' action='viewAllUsers.php' enctype='multipart/form-data'>
+                    <table class='documents' id='tblViewAllUsers'>
+                        <thead class='documents' id='theadViewAllUsers'>
+                            <tr class='documents' id='trViewAllUsersHeaders'>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersUserNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersUserNameHeader' type='submit' name='submit' value='User Name' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersFirstNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersFirstNameHeader' type='submit' name='sortUserFirstName' value='First Name' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersLastNameHeader'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersLastNameHeader' type='submit' name='sortUserLastName' value='Last Name' disabled>
+                                </th>
+                                <th class='form-submit-large-header-left' id='thViewAllUsersEmailHeader'>
+                                    <input class='form-submit-large-header-left' id='subViewAllUsersEmailHeader' type='submit' name='sortUserEmail' value='Email' disabled>
+                                </th>
+                                <th class='form-submit-medium-header-center' id='thViewAllUsersSendFriendRequest'>
+                                    <input class='form-submit-medium-header-center' id='subViewAllUsersSendFriendRequest' type='submit' name='requestFriend' value='Friend Request' disabled>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>";
             
         } else {
         

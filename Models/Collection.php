@@ -751,7 +751,28 @@ class Collection
                                 </th>
                             </tr>
                         </thead>
-                    </table>";
+                    </table>
+                    <br>
+                    <table class='documents' id='tblMyDocumentsSubmitButtons'>
+                        <tr class='documents' id='trMyDocumentsSubmitButtons'>
+                            <td class='documents' id='tdMyDocumentsShare'>
+                                <input class='form-submit-button' id='subMyDocumentsShare' type='submit' name='share' value='Share'>
+                            </td>
+                            <td></td>
+                            <td class='documents' id='tdMyDocumentsAddToCollection'>
+                                <input class='form-submit-button-large' id='subMyDocumentsAddToCollection' type='submit' name='addToPendingPublicCollection' value='Add To Public Collection'>
+                            </td>
+                            <td></td>
+                            <td class='documents' id='tdMyDocumentsUpdate'>
+                                <input class='form-submit-button' id='subMyDocumentsUpdate' type='submit' name='updateDoc[$key]' value='Update'>
+                            </td>
+                            <td></td>
+                            <td class='documents' id='tdMyDocumentsDelete'>
+                                <input class='form-submit-button' id='subMyDocumentsDelete' type='submit' name='delete' value='Delete'>
+                            </td>
+                        </tr>
+                    </table>
+                </form>";
             
         } else {
             
