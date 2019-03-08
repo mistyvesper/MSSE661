@@ -288,18 +288,25 @@ class Collection
         unset($_SESSION['collection']);
         unset($_SESSION['displayMessages']);
         $this->getDocuments();
-        $documentCount = $this->getDocumentCount();
         $docUploadDate = (string)date("Y/m/d h:i:s");
-        $error = false;
+        $errorCount = 0;
         $_SESSION['fileUploadCount'] = 1;
 
         // move files
 
         foreach ($_FILES as $file) {
+            
+            // get current document count
+            
+            $documentCount = $this->getDocumentCount();
 
             // get docType after form submission
 
             $docType = $_POST['docType'][$i];
+            
+            // get file extension
+
+            $docExtension = getFileExtensionByType($file['type']);
 
             // check for errors 
 
@@ -308,16 +315,17 @@ class Collection
             } else if ($file['error'] == 1 || $file['error'] == 2 || $file['size'] > 26214400) {
                 $_SESSION['displayMessages'][] = InfoMessage::fileExceedsMaxSize($file['name']);
                 $_SESSION['fileUploadCount'] = 1;
-            } else if ($file['error'] == 0 || $docType != '' && ($file['error'] != 1 || $file['error'] != 2 || $file['size'] < 26214400)) {
+                $error++;
+            } else if ($docExtension == '') {
+                $error++;
+                $_SESSION['displayMessages'][] = InfoMessage::fileUnsupported($file['name']);
+                $_SESSION['fileUploadCount'] = 1;
+            } else if ($file['error'] == 0 || $docType != '' && ($file['error'] != 1 || $file['error'] != 2 || $file['size'] < 26214400) || $docExtension != '') {
 
                 $newDocTypeDirectory = $userDirectory . $docType . '/';
                 $sanitizedFileName = sanitizeString($file['name']);
                 $uploadPath = $newDocTypeDirectory . $sanitizedFileName;
                 $docTitle = pathinfo($uploadPath)['filename'];
-
-                // get file extension
-
-                $docExtension = getFileExtensionByType($file['type']);
 
                 // get file size
 
@@ -345,32 +353,22 @@ class Collection
 
                     // upload file to temporary folder and then move to user folder
 
-                    if (move_uploaded_file($file['tmp_name'], $uploadPath)) {
-                        $error = false;
-                    } else {
-                        $error = true;
+                    if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+                        $error++;
                         $_SESSION['displayMessages'][] = InfoMessage::fileUploadFailed($file['name']);
                         $_SESSION['fileUploadCount'] = 1;
                     }
                 } else if ($this->getDocumentID($document) > 0) {
-                    $error = true;
+                    $error++;
                     $_SESSION['displayMessages'][] = InfoMessage::fileDuplicate($file['name']);
                     $_SESSION['fileUploadCount'] = 1;
-                } else if ($docExtension == '') {
-                    $error = true;
-                    $_SESSION['displayMessages'][] = InfoMessage::fileUnsupported($file['name']);
-                    $_SESSION['fileUploadCount'] = 1;
                 } else {
-                    $error = true;
+                    $error++;
                     $_SESSION['displayMessages'][] = InfoMessage::fileUploadFailed($file['name']);
                     $_SESSION['fileUploadCount'] = 1;
                 }
-            } else if ($file['error'] == 1 || $file['error'] == 2 || $file['size'] > 26214400) {
-                $error = true;
-                $_SESSION['displayMessages'][] = InfoMmessage::fileExceedsMaxSize($file['name']);
-                $_SESSION['fileUploadCount'] = 1;
             } else if ($file['error'] > 3) {
-                $error = true;
+                $error++;
                 $_SESSION['displayMessages'][] = InfoMessage::fileUploadFailed($file['name']);
                 $_SESSION['fileUploadCount'] = 1;
             } 
@@ -378,9 +376,10 @@ class Collection
             $i++;
         }
         
-        if (!$error && $documentCount == $this->getDocumentCount()) {
+        if ($error == 0 && $documentCount == $this->getDocumentCount()) {
             $_SESSION['displayMessages'][] = InfoMessage::fileNoFilesSelected();
-        } else if (!$error) {
+            unset($_FILES['file']);
+        } else if ($error == 0) {
             $_SESSION['displayMessages'][] = InfoMessage::fileUploadSuccessful();
             header('Refresh: 0; URL=index.php');
         }
