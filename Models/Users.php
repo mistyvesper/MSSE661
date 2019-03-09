@@ -425,9 +425,7 @@ class Users {
                                 </th>
                             </tr>
                         </thead>
-                    </table><br>
-                    <input class='form-submit-button' id='subViewAllFriendsDelete' type='submit' name='deleteFriends[$userID]' value='Delete'>
-                </form>";
+                    <tbody>";
             
         } else {
         

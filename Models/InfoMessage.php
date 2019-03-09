@@ -191,7 +191,7 @@ class InfoMessage {
     }
     
     public function passwordUpdated() {
-        return "<span class='infoMessage' id='spnPWUpdated'>ERROR: Your password has been updated.</span>";
+        return "<span class='infoMessage' id='spnPWUpdated'>Your password has been updated.</span>";
     }
     
     public function passwordUpdateFailed() {

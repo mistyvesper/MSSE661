@@ -225,6 +225,14 @@ function updatePassword($userName, $newPassword, $db) {
     
     $userName = sanitizeString($userName);
     $newPassword = sanitizeString($newPassword);
+    
+    // declare and initialize variables
+    
+    $salt1 = '1234';
+    $salt2 = '4321';
+    if ($newPassword != '') {
+        $token = hash("ripemd128", "$salt1$newPassword$salt2");
+    }
  
     // open database connection
         
@@ -242,13 +250,13 @@ function updatePassword($userName, $newPassword, $db) {
         // get properties
 
         $tempUser = $userName;
-        $tempPass = $newPassword;
+        $tempPass = $token;
 
         $statement->execute();
 
         // check for errors
 
-        if ($statement->error != '') {
+        if ($statement->error == '') {
             $_SESSION['displayMessage'] = InfoMessage::passwordUpdated();
             $db->closeDBConnection();
             return true;

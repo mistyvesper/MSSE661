@@ -202,7 +202,12 @@
     // delete pending shared documents
     
     if (isset($_POST['deletePendingSharedDocs']) && isset($_POST['document'])) {
-        $collection->deletePendingSharedDocuments();
+        
+        foreach ($_POST['document'] as $documentID) {
+            $pendingShareDocument = $collection->getSharedDocumentByID($documentID);
+            $collection->deletePendingSharedDocument($pendingShareDocument);
+        }
+        
         header('Location: shareDocuments.php');
     }
     
@@ -293,6 +298,8 @@
     // add received documents to collection
     
     if (isset($_POST['addToMyCollection']) && isset($_POST['document'])) {
+        unset($_SESSION['displayMessages']);
+        unset($_SESSION['displayMessage']);
         $collection->addReceivedDocumentsToCollection();
     }
     
@@ -311,6 +318,10 @@
     // view received message
     
     if (isset($_POST['viewReceivedMessage'])) {
+        if (__FILE__ == 'viewAllReceivedMessages.php') {
+            unset($_SESSION['displayMessage']);
+            unset($_SESSION['displayMessages']);
+        }
         $_SESSION['messageID'] = key($_POST['viewReceivedMessage']);
         $messages->readMessage($_SESSION['messageID']);
         header("Location: viewReceivedMessage.php");
@@ -456,21 +467,25 @@
     // change password
     
     if (isset($_POST['updatePassword'])) {
-        
-        unset($_SESSION['displayMessage']);
+            
         $oldPassword = sanitizeString($_POST['oldPassword']);
         $newPassword1 = sanitizeString($_POST['newPassword1']);
         $newPassword2 = sanitizeString($_POST['newPassword2']);
         
         if (strlen($oldPassword) == 0 || strlen($newPassword1) == 0 || strlen($newPassword2) == 0) {
+            unset($_SESSION['displayMessage']);
             $_SESSION['displayMessage'] = InfoMessage::invalidEntries();
-        } else if (!validateUser($appUser, $oldPassword, $dbConnection)) {
+        } else if (!validateUser($appUser, $oldPassword, $database)) {
+            unset($_SESSION['displayMessage']);
             $_SESSION['displayMessage'] = InfoMessage::invalidPassword();
         } else if ($newPassword1 != $newPassword2) {
+            unset($_SESSION['displayMessage']);
             $_SESSION['displayMessage'] = InfoMessage::passwordsDontMatch();
         } else if (updatePassword($appUser, $newPassword1, $database)) {
+            unset($_SESSION['displayMessage']);
             $_SESSION['displayMessage'] = InfoMessage::passwordUpdated();
         } else {
+            unset($_SESSION['displayMessage']);
             $_SESSION['displayMessage'] = InfoMessage::passwordUpdateFailed();
         }
     }

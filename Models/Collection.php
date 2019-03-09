@@ -1179,11 +1179,11 @@ class Collection
             }
             
             if ($duplicate) {
-                $_SESSION['displayMessage'][] = InfoMessage::documentsDuplicate($fileName);
+                $_SESSION['displayMessages'][] = InfoMessage::documentsDuplicate($fileName);
             } else if ($this->addReceivedDocumentToCollection($receivedDocument)) {  
-                $_SESSION['displayMessage'][] = InfoMessage::documentsAdded();
+                $_SESSION['displayMessages'][] = InfoMessage::documentsAdded();
             } else {
-                $_SESSION['displayMessage'][] = InfoMessage::documentsNotAdded();
+                $_SESSION['displayMessages'][] = InfoMessage::documentsNotAdded();
             }
         }
     }
@@ -1225,7 +1225,7 @@ class Collection
                 $this->db->closeDBConnection();
                 return false;
             } else if (file_exists($destination)) {
-                $_SESSION['displayMessage'] = InfoMessage::fileDuplicate();
+                $_SESSION['displayMessage'] = InfoMessage::fileDuplicate($title.$lowerExtension);
                 $this->db->closeDBConnection();
                 return false;
             } else if (file_exists($source) && copy($source, $destination)) {
@@ -1350,7 +1350,7 @@ class Collection
                         <td class='form-text-small-center' id='tdReceivedDocumentsMsgExtension'>$extension</td>
                         <td class='form-text-small-center' id='tdReceivedDocumentsMsgSize'>$size</td>
                         <td class='form-text-medium-center' id='tdReceivedDocumentsMsgShareDate'>$sharedDate</td>
-                        <td class='form-submit-small-center-gray' id='tdReceivedDocumentsMsgDownload'>
+                        <td class='form-text-small-center' id='tdReceivedDocumentsMsgDownload'>
                             <input class='form-submit-small-center-gray' id='subReceivedDocumentsMsgDownload' type='submit' name='downloadReceivedDocument[$receivedDocID]' value='Download'>
                         </td>
                     </tr>";
@@ -2742,6 +2742,8 @@ class Collection
         // get collection title
         
         $collectTitle = $this->getPublicCollectionTitle($collectID);
+        $rootDirectory = dirname(dirname(__FILE__));
+        $file = $rootDirectory . '/' . $collectTitle;
         
         // open database connection
         
@@ -2781,6 +2783,8 @@ class Collection
                 // get documents
 
                 unset($_SESSION['publicCollection']);
+                unset($_SESSION['publicCollectionDocs']);
+                unset($this->publicCollectionDocs);
                 $this->getPublicCollections();
             }
         } else {

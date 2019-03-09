@@ -441,10 +441,7 @@ class Messages {
                                 </th>
                             </tr>
                         </thead>
-                    </table>
-                    <br>
-                    <input class='form-submit-button' id='subReceivedMessagesDelete' type='submit' name='deleteReceivedMessages' value='Delete'>
-                </form>";
+                        <tbody>";
             
         } else {
         

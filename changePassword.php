@@ -55,7 +55,7 @@
         echo "<br><br>";
     }
     
-    echo "<form class='documents' id='frmChangePassword' method='post' action='manageProfile.php' enctype='multipart/form-data'>
+    echo "<form class='documents' id='frmChangePassword' method='post' action='changePassword.php' enctype='multipart/form-data'>
             <table class='documents' id='tblChangePassword'>
                 <tr class='documents' id='trChangePasswordOld'>
                     <td class='form-label-large-left' id='tdChangePasswordOldLabel'>Enter Old Password:</td>

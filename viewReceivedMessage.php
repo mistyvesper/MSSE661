@@ -17,10 +17,10 @@
     
     // show error messages
     
-    if ($_SESSION['displayMessage']) {
+    if (isset($_SESSION['displayMessages']) || isset($_SESSION['displayMessage'])) {
         
-        if (is_array($_SESSION['displayMessage']) > 0) {
-            foreach($_SESSION['displayMessage'] as $displayMessage) {
+        if (isset($_SESSION['displayMessages']) > 0) {
+            foreach($_SESSION['displayMessages'] as $displayMessage) {
                 echo "<br>";
                 echo $displayMessage;
                 echo "<br>";
