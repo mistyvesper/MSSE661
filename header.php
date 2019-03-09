@@ -662,10 +662,10 @@
                         <script src='https://code.jquery.com/ui/1.12.1/jquery-ui.js'
                             integrity='sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30='crossorigin='anonymous'>
                         </script>
-                        <script type='text/jrc='/JavaScript/searchCollection.js'></script>
+                        <script src='/JavaScript/searchCollection.js'></script>
                         <script src='/JavaScript/pagination.js'></script>
-                        <script src='avascript' charset='utf8' src='https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js'></script>
-                        <script s/JavaScript/checkForUpdates.js'></script>
+                        <script type='text/javascript' charset='utf8' src='https://cdn.datatables.net/1.10.19/js/jquery.dataTables.js'></script>
+                        <script src='/JavaScript/checkForUpdates.js'></script>
                     </head>
                     <body class='body-loggedin' id='bdyLoggedIn'>
                         <span class='loggedIn' id='spnLoggedIn'>
