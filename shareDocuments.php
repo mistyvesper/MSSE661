@@ -35,7 +35,7 @@
         $sendTo = $_SESSION['sendTo'];
         foreach ($_SESSION['friends'] AS $friend) {
             $friendUserName = $friend['userName'];            
-            if ($friend == $sendTo) {
+            if ($friendUserName == $sendTo) {
                 echo "<option class='form-text-medium-center' id='optShareDocumentsWith' value='$friendUserName' selected='selected'>$sendTo</option>";
             } else {
                 echo "<option class='form-text-medium-center' id='optShareDocumentsWith' value='$friendUserName'>$friendUserName</option>";

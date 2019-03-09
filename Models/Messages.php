@@ -504,8 +504,6 @@ class Messages {
             echo "</tbody></table>
                     <br>
                     <input class='form-submit-button' id='subReceivedMessagesDelete' type='submit' name='deleteReceivedMessages' value='Delete'>
-                </form><br>
-                    <input class='form-submit-button' id='subSentMessagesDelete' type='submit' name='deleteSentMessages' value='Delete'>
                 </form>";
         }
     }

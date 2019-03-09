@@ -1832,7 +1832,7 @@ class Collection
         $subject = sanitizeString($_POST['subject']);
         $body = sanitizeString($_POST['body']);
         $sharedDocuments = $_SESSION['pendingSharedCollection'];
-        $_SESSION['sharedDate'] = date('Y-m-d h:i:s');
+        $_SESSION['sharedDate'] = date('Y-m-d H:i:s');
         $sharedDate = $_SESSION['sharedDate'];
         
         // check for errors and send message
@@ -2609,6 +2609,8 @@ class Collection
     // function to get collection documents by id
     
     public function getPublicCollectionDocsByID($collectID) {
+        
+        unset($_SESSION['publicCollectionDocs']);
         
         // check if session variable is set
         
