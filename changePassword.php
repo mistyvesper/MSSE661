@@ -28,7 +28,7 @@
             $userLastName = $row['userLastName'];
         }
     } else {
-        $_SESSION['displayMessage'] = InfoMessage::dbConnectError();
+        $_SESSION['newDisplayMessage'] = InfoMessage::dbConnectError();
     }
 
     // close result and database connection
@@ -50,8 +50,8 @@
     
     // display error messages
     
-    if (isset($_SESSION['displayMessage'])) {
-        echo $_SESSION['displayMessage'];
+    if (isset($_SESSION['newDisplayMessage'])) {
+        echo $_SESSION['newDisplayMessage'];
         echo "<br><br>";
     }
     

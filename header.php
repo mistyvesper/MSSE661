@@ -473,21 +473,23 @@
         $newPassword2 = sanitizeString($_POST['newPassword2']);
         
         if (strlen($oldPassword) == 0 || strlen($newPassword1) == 0 || strlen($newPassword2) == 0) {
-            unset($_SESSION['displayMessage']);
-            $_SESSION['displayMessage'] = InfoMessage::invalidEntries();
+            unset($_SESSION['newDisplayMessage']);
+            $_SESSION['newDisplayMessage'] = InfoMessage::invalidEntries();
         } else if (!validateUser($appUser, $oldPassword, $database)) {
-            unset($_SESSION['displayMessage']);
-            $_SESSION['displayMessage'] = InfoMessage::invalidPassword();
+            unset($_SESSION['newDisplayMessage']);
+            $_SESSION['newDisplayMessage'] = InfoMessage::invalidPassword();
         } else if ($newPassword1 != $newPassword2) {
-            unset($_SESSION['displayMessage']);
-            $_SESSION['displayMessage'] = InfoMessage::passwordsDontMatch();
+            unset($_SESSION['newDisplayMessage']);
+            $_SESSION['newDisplayMessage'] = InfoMessage::passwordsDontMatch();
         } else if (updatePassword($appUser, $newPassword1, $database)) {
-            unset($_SESSION['displayMessage']);
-            $_SESSION['displayMessage'] = InfoMessage::passwordUpdated();
+            unset($_SESSION['newDisplayMessage']);
+            $_SESSION['newDisplayMessage'] = InfoMessage::passwordUpdated();
         } else {
-            unset($_SESSION['displayMessage']);
-            $_SESSION['displayMessage'] = InfoMessage::passwordUpdateFailed();
+            unset($_SESSION['newDisplayMessage']);
+            $_SESSION['newDisplayMessage'] = InfoMessage::passwordUpdateFailed();
         }
+        
+        header('Location: changePassword.php');
     }
 
  /**********************************************************************************************************
